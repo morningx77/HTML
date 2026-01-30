@@ -102,13 +102,37 @@
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <!-- Header -->
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
 
-    <!-- Blog Content Area -->
-    <div id="blueprint-content" class="flex-grow overflow-y-auto custom-scroll p-8 space-y-6 bg-gray-50 blog-content">
-        <!-- Content Injected via JS -->
-    </div>
+        <!-- VIEW: BLUEPRINT -->
+        <section id="view-blueprint" class="hidden fade-in space-y-8 h-[700px]">
+
+            <div class="flex flex-col lg:flex-row gap-8 h-[600px]">
+                <!-- Interactive Blog Post Preview (Left) -->
+                <div
+                    class="lg:w-2/3 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col relative">
+                    <!-- Fake Browser Header -->
+                    <div class="bg-gray-100 p-3 border-b border-gray-200 flex items-center space-x-2 sticky top-0 z-10">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        <div class="ml-4 bg-white rounded px-2 py-0.5 text-xs text-gray-400 w-64">
+                            blog.naver.com/cheomkok/22345678</div>
+                    </div>
+
+                    <!-- Blog Content Area -->
+                    <div id="blueprint-content"
+                        class="flex-grow overflow-y-auto custom-scroll p-8 space-y-6 bg-gray-50 blog-content">
+                        <!-- Content Injected via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
 
     <!-- JS LOGIC -->
     <script>
