@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네이버 검색 & 홈판 전략 컨설팅: 돈의결</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #fdfbf7; color: #1f2937; }
+        .nav-item.active { border-bottom: 2px solid #03C75A; color: #03C75A; font-weight: 700; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; height: 300px; max-height: 300px; }
+        .highlight-green { color: #03C75A; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom Scrollbar for text areas */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals with Naver Green Accent (#03C75A) for branding alignment -->
+</head>
+<body class="bg-[#fdfbf7] min-h-screen flex flex-col">
+
+    <!-- Application Structure Plan: 
+         1. Header: Branding and Navigation.
+         2. Hero: Executive Summary of the "Crisis" and "Opportunity".
+         3. Strategy Section: 3 Columns explaining Keywords, Home Feed, and Content Trust, supported by Charts.
+         4. Diagnosis Section: Interactive comparison of 'Old Style' vs 'New Solution' based on specific report data.
+         5. Blueprint Section: Interactive breakdown of the 'Optimized Blog Post Draft' showing why each part works.
+         6. Action Plan: Checklist. 
+    -->
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-black tracking-tighter text-gray-900">돈의<span class="text-[#03C75A]">결</span> <span class="text-xs font-normal text-gray-500 ml-2 border-l pl-2 border-gray-300">Strategy Dashboard</span></span>
+                </div>
+                <nav class="flex space-x-8 h-full items-center">
+                    <button onclick="nav('summary')" id="nav-summary" class="nav-item active px-3 py-2 text-sm font-medium text-gray-900">핵심 요약</button>
+                    <button onclick="nav('strategy')" id="nav-strategy" class="nav-item px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900">3대 전략</button>
+                    <button onclick="nav('diagnosis')" id="nav-diagnosis" class="nav-item px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900">Before & After</button>
+                    <button onclick="nav('blueprint')" id="nav-blueprint" class="nav-item px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900">실전 예시 분석</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- VIEW: SUMMARY (HERO) -->
+        <section id="view-summary" class="fade-in space-y-8">
+            <div class="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full mix-blend-multiply filter blur-3xl opacity-70 -mr-16 -mt-16"></div>
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold text-gray-900 mb-4">2026 네이버 검색 로직 대변동:<br><span class="text-[#03C75A]">위기를 기회로 바꾸는 전략 보고서</span></h1>
+                    <p class="text-lg text-gray-600 max-w-3xl mb-6 leading-relaxed">
+                        현재 네이버는 <strong>'스마트블록 삭제'</strong>, <strong>'AI 검색(Cue:) 도입'</strong>, <strong>'홈피드 강화'</strong>라는 3대 격변을 겪고 있습니다.
+                        <br>과거의 '기계적 상위노출 공식'은 끝났습니다. 이제는 AI가 대체할 수 없는 <strong>'인간의 고유한 경험(Originality)'</strong>과 <strong>'홈판을 타겟팅한 기획'</strong>만이 살아남습니다.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold border border-red-100">
+                            🚫 정답형 키워드 (AI가 장악)
+                        </div>
+                        <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-semibold border border-blue-100">
+                            📉 단순 정보 나열 (노출 하락)
+                        </div>
+                        <div class="bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-semibold border border-green-100">
+                            ✅ 경험형 콘텐츠 (블루오션)
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button onclick="nav('strategy')" class="bg-[#03C75A] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#02a349] transition shadow-lg shadow-green-200">
+                            전략 상세 보기 &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-gray-500 text-sm font-medium mb-2">현재 대응 상태</h3>
+                    <div class="text-3xl font-bold text-red-500">위험</div>
+                    <p class="text-sm text-gray-400 mt-2">기존 로직(정답형) 위주 작성 중</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-gray-500 text-sm font-medium mb-2">목표 트래픽 채널</h3>
+                    <div class="text-3xl font-bold text-gray-900">홈판(추천)</div>
+                    <p class="text-sm text-gray-400 mt-2">검색 유입 한계 극복 필요</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-gray-500 text-sm font-medium mb-2">핵심 경쟁력</h3>
+                    <div class="text-3xl font-bold text-[#03C75A]">Originality</div>
+                    <p class="text-sm text-gray-400 mt-2">AI가 흉내 낼 수 없는 '경험'</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: STRATEGY -->
+        <section id="view-strategy" class="hidden fade-in space-y-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">2026 필승 3대 전략</h2>
+                <p class="text-gray-500 mt-2">데이터 분석 기반의 실질적 대응 방안</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Strategy 1: Keywords -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-gray-50 border-b border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900">1. 키워드 전략 재편</h3>
+                        <p class="text-sm text-gray-500">"AI와 싸우지 말고, 빈틈을 노려라"</p>
+                    </div>
+                    <div class="p-6 flex-grow">
+                        <ul class="space-y-4 text-sm text-gray-600">
+                            <li class="flex items-start">
+                                <span class="mr-2 text-red-500">✖</span>
+                                <span><strong>정답형:</strong> "2026 연봉표", "등본 발급" <br><span class="text-xs text-gray-400">→ AI 브리핑이 상단 장악. 클릭률 급감.</span></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 text-yellow-500">⚠️</span>
+                                <span><strong>구입형:</strong> "강남 맛집", "변호사 추천" <br><span class="text-xs text-gray-400">→ 광고 영역 도배. 진입 장벽 높음.</span></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 text-[#03C75A]">✔</span>
+                                <span><strong>경험형:</strong> "협의이혼 후기", "연봉 협상 실패담" <br><span class="text-xs text-gray-400">→ AI가 흉내 못 내는 '감정/맥락' 영역. 상위노출 기회.</span></span>
+                            </li>
+                        </ul>
+                        <div class="mt-6 pt-6 border-t border-gray-100">
+                            <!-- Visualization & Content Choices: Bar chart to visually compare the competition vs. opportunity for keyword types -->
+                            <div class="chart-container">
+                                <canvas id="keywordChart"></canvas>
+                            </div>
+                            <p class="text-center text-xs text-gray-400 mt-2">키워드 유형별 상위노출 기회 지수</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 2: Home Feed -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-gray-50 border-b border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900">2. 홈판(추천) 공략</h3>
+                        <p class="text-sm text-gray-500">"검색하지 않는 사람을 낚아라"</p>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm mb-4">검색 유입만으로는 트래픽 한계가 있습니다. 홈 피드에 노출되어야 <strong>퀀텀 점프</strong>가 가능합니다.</p>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                                <h4 class="font-bold text-sm mb-2 text-gray-800">핵심 기법: 반상식 (Anti-Common Sense)</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center text-xs">
+                                        <span class="w-12 text-gray-400">Bad</span>
+                                        <span class="text-gray-500 line-through">"열심히 살면 성공한다"</span>
+                                    </div>
+                                    <div class="flex items-center text-sm font-bold text-gray-800">
+                                        <span class="w-12 text-[#03C75A]">Good</span>
+                                        <span>"열심히 살수록 가난해지는 3가지 이유"</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-[#03C75A] text-sm mb-1">Action Point</h4>
+                            <p class="text-xs text-green-800">제목에 '부정적 단어(실수, 충격)', '의문형', '구체적 수치'를 포함하여 클릭률(CTR) 극대화.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 3: Content Quality -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-gray-50 border-b border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-900">3. 콘텐츠 & 신뢰도</h3>
+                        <p class="text-sm text-gray-500">"AI 냄새를 지우고 데이터를 입혀라"</p>
+                    </div>
+                    <div class="p-6 flex-grow">
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">황금 비율 공식</h4>
+                            <div class="chart-container h-40 max-h-40">
+                                <canvas id="contentChart"></canvas>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm text-gray-600 mt-4">
+                            <li class="flex items-start">
+                                <span class="bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
+                                <span><strong>Dialog Mode:</strong> 친구에게 말하듯 구어체 사용. (AI 냄새 제거)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
+                                <span><strong>Structured Data:</strong> 줄글 대신 표/리스트 활용. (다이아 로직 가산점)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
+                                <span><strong>Retention:</strong> 글 하단에 '비공개 칼럼' 등으로 가두리 양식장 전략 실행.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: DIAGNOSIS (BEFORE & AFTER) -->
+        <section id="view-diagnosis" class="hidden fade-in space-y-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">현황 진단 및 개선안</h2>
+                <p class="text-gray-500 mt-2">실제 데이터(돈의결 블로그) 기반 1:1 비교 분석</p>
+            </div>
+
+            <!-- Interactive Toggle Tabs -->
+            <div class="flex justify-center mb-8 space-x-4">
+                <button onclick="switchDiagnosis('title')" id="diag-btn-title" class="px-6 py-2 rounded-full bg-[#03C75A] text-white font-bold shadow transition">제목 (Title)</button>
+                <button onclick="switchDiagnosis('intro')" id="diag-btn-intro" class="px-6 py-2 rounded-full bg-white text-gray-500 border border-gray-200 hover:bg-gray-50 transition">도입부 (Intro)</button>
+                <button onclick="switchDiagnosis('body')" id="diag-btn-body" class="px-6 py-2 rounded-full bg-white text-gray-500 border border-gray-200 hover:bg-gray-50 transition">본문 (Body)</button>
+            </div>
+
+            <!-- Comparison Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden">
+                <!-- BEFORE -->
+                <div class="p-8 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-200 relative">
+                    <div class="absolute top-4 left-4 bg-gray-200 text-gray-600 px-3 py-1 rounded text-xs font-bold">AS-IS (현재)</div>
+                    <div id="diag-content-before" class="mt-8 space-y-4">
+                        <!-- Content injected via JS -->
+                    </div>
+                    <div id="diag-analysis-before" class="mt-6 p-4 bg-red-50 text-red-800 text-sm rounded-lg border border-red-100">
+                        <!-- Analysis injected via JS -->
+                    </div>
+                </div>
+
+                <!-- AFTER -->
+                <div class="p-8 bg-white relative">
+                    <div class="absolute top-4 left-4 bg-[#03C75A] text-white px-3 py-1 rounded text-xs font-bold">TO-BE (개선)</div>
+                    <div id="diag-content-after" class="mt-8 space-y-4">
+                        <!-- Content injected via JS -->
+                    </div>
+                    <div id="diag-analysis-after" class="mt-6 p-4 bg-green-50 text-green-800 text-sm rounded-lg border border-green-100">
+                        <!-- Analysis injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: BLUEPRINT (OPTIMIZED POST) -->
+        <section id="view-blueprint" class="hidden fade-in space-y-8">
+            <div class="flex flex-col md:flex-row items-start justify-between mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">실전 예시 분석: 2026 연봉 순위</h2>
+                    <p class="text-gray-500 mt-2">최적화 가이드가 적용된 실제 글쓰기 예시입니다. 각 섹션을 클릭하여 전략을 확인하세요.</p>
+                </div>
+                <div class="mt-4 md:mt-0 bg-yellow-50 text-yellow-800 px-4 py-2 rounded-lg text-sm border border-yellow-200">
+                    💡 섹션을 클릭하면 상세 해설이 나타납니다.
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 h-full">
+                <!-- Post Preview (Interactive) -->
+                <div class="lg:w-2/3 bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col h-[600px]">
+                    <div class="bg-gray-100 p-3 border-b border-gray-200 flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                        <span class="text-xs text-gray-500 ml-2">blog.naver.com/money_resolve</span>
+                    </div>
+                    <div class="p-8 overflow-y-auto custom-scroll flex-grow relative" id="blueprint-container">
+                        <!-- Blueprint Items (Injected JS) -->
+                    </div>
+                </div>
+
+                <!-- Strategy Explanation Panel -->
+                <div class="lg:w-1/3 bg-gray-900 text-white rounded-xl p-6 shadow-xl flex flex-col h-[600px]">
+                    <h3 class="text-[#03C75A] font-bold text-lg mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        전략 해설
+                    </h3>
+                    <div id="blueprint-explanation" class="flex-grow overflow-y-auto custom-scroll pr-2">
+                        <p class="text-gray-400 italic">왼쪽의 블로그 글 섹션을 클릭하면, 해당 부분에 적용된 <span class="text-white font-bold">숨겨진 의도와 전략</span>이 이곳에 표시됩니다.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-700">
+                        <div class="text-xs text-gray-500">적용된 전략 포인트</div>
+                        <div id="blueprint-tags" class="flex flex-wrap gap-2 mt-2">
+                            <!-- Tags injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All visuals via Tailwind or Chart.js -->
+
+    <script>
+        // --- DATA STORE ---
+        
+        // Diagnosis Data
+        const diagnosisData = {
+            title: {
+                before: {
+                    content: `<h3 class="text-xl font-medium text-gray-400">"2026년 직업 연봉 순위 총정리! 연봉 순위표 속 내 등수는?"</h3>`,
+                    analysis: `<strong>문제점:</strong> 전형적인 '정답형/정보성' 제목입니다. AI 브리핑이 요약하기 쉽고, 홈판에서 사용자의 호기심을 자극하지 못해 클릭률이 낮습니다.`
+                },
+                after: {
+                    content: `<h3 class="text-xl font-bold text-gray-900">"아직도 연봉 순위 믿으세요? <span class="text-[#03C75A] border-b-4 border-green-200">1위 직업 가진 사람들이 몰래 이직하는 진짜 이유</span>"</h3>`,
+                    analysis: `<strong>개선 전략:</strong> '통념 부정(반상식)' + '의문형'을 사용하여 호기심을 자극합니다. 단순 순위 정보가 아닌 '비하인드 스토리'를 암시하여 클릭을 유도합니다.`
+                }
+            },
+            intro: {
+                before: {
+                    content: `<p class="text-gray-500">"다들 월급날 통장 보면 어떤 생각 드세요? 솔직히 로그인하자마자 로그아웃한다 말이 웃픈 현실처럼 느껴질 때가 많잖아요."</p>`,
+                    analysis: `<strong>문제점:</strong> 너무 일반적이고 평범한 오프닝입니다. AI가 작성한 듯한 느낌을 주며, 독자를 3초 안에 사로잡는 '훅(Hook)'이 부족합니다.`
+                },
+                after: {
+                    content: `<p class="text-gray-800">"야, 너 뉴스 봤어? 도선사가 연봉 1.5억이래. 나 지금이라도 배 타러 갈까?"<br><br>어제 오랜만에 만난 대학 동기가 대뜸 맥주잔을 내려놓으며 한숨을 푹 쉬더라고요. 제가 딱 잘라 말해줬습니다.<br><br><strong>"야, 그게 네 통장에 그대로 꽂히냐?"</strong></p>`,
+                    analysis: `<strong>개선 전략:</strong> 대화체(Dialog Mode)로 시작하여 AI 냄새를 제거하고 몰입도를 높입니다. 구체적인 상황 묘사로 독자의 감정에 호소합니다.`
+                }
+            },
+            body: {
+                before: {
+                    content: `<div class="bg-gray-100 p-4 rounded text-xs text-gray-400">[순위표 나열]<br>1위: 임원<br>2위: 도선사...<br>(단순 텍스트 나열)</div>`,
+                    analysis: `<strong>문제점:</strong> 팩트 나열에만 치중되어 있어 독창성(Originality) 점수가 낮습니다. 다른 블로그나 뉴스와 차별점이 없습니다.`
+                },
+                after: {
+                    content: `<div class="border border-gray-200 rounded p-2 text-sm"><table class="w-full text-left"><thead><tr class="border-b"><th class="py-1">직업</th><th class="py-1">추천도(사견)</th></tr></thead><tbody><tr><td>기업 임원</td><td>★☆☆☆☆ (수명 단축)</td></tr><tr><td>항공 조종사</td><td>★★★★★ (워라밸)</td></tr></tbody></table></div><p class="mt-2 text-sm">"제가 만난 임원분들, 주말에도 접대 골프 나가느라..."</p>`,
+                    analysis: `<strong>개선 전략:</strong> <span class="text-[#03C75A]">데이터베이스(표)</span>를 사용하여 전문성을 보여주고, 개인적인 경험과 해석을 덧붙여 독창성을 확보합니다.`
+                }
+            }
+        };
+
+        // Blueprint Data (The Optimized Post)
+        const blueprintSections = [
+            {
+                id: 'sec-title',
+                title: '제목 & 썸네일',
+                content: `<h1 class="text-2xl font-bold mb-2">아직도 연봉 순위 믿으세요? 1위 직업 가진 사람들이 몰래 이직하는 진짜 이유</h1><div class="w-full h-32 bg-gray-200 rounded flex items-center justify-center text-gray-500 mb-4 text-sm">[썸네일: 연봉 1.5억? 실수령액 까보면 충격..]</div>`,
+                explanation: `<strong>1. 후킹(Hooking) 제목 전략</strong><br>단순한 '정보 전달(정답형)' 제목은 AI에게 먹힙니다. 독자의 상식을 깨는 질문("아직도 믿으세요?")과 부정적인 호기심("몰래 이직하는 이유")을 자극하여 <strong>홈판 노출 시 클릭률(CTR)</strong>을 극대화합니다.`,
+                tags: ['CTR 증대', '홈판 타겟팅', '호기심 유발']
+            },
+            {
+                id: 'sec-intro',
+                title: '도입부 (Hook & Emotion)',
+                content: `<p class="mb-4">"야, 너 뉴스 봤어? 도선사가 연봉 1.5억이래. 나 지금이라도 배 타러 갈까?"</p><p class="mb-4">어제 오랜만에 만난 대학 동기가 대뜸 맥주잔을 내려놓으며 한숨을 푹 쉬더라고요. 제가 웃으면서 딱 잘라 말해줬습니다.</p><p class="mb-4 font-bold">"야, 그게 네 통장에 그대로 꽂히냐? 그리고 내 지인 중에 도선사 준비하다가 3년 날린 형만 셋이야."</p><p class="mb-4">솔직히 우리, 월급날마다 '로그인하자마자 로그아웃'되는 통장 잔고 보면 현타 오잖아요. 그래서 자꾸 <strong>2026년 직업 연봉 순위</strong> 같은 거 검색해서 남들은 얼마나 버나 훔쳐보고 부러워하고요.</p>`,
+                explanation: `<strong>2. 대화체 & 페르소나 (AI 회피)</strong><br>AI는 감정적인 대화를 흉내 내기 어렵습니다. "야, 너 뉴스 봤어?" 같은 <strong>구어체 대화</strong>로 시작하여 인간적인 냄새(Originality)를 풍깁니다. 이는 독자의 이탈을 막고 몰입도를 높이는 핵심 장치입니다.`,
+                tags: ['이탈률 방지', 'AI 냄새 제거', '공감 유도']
+            },
+            {
+                id: 'sec-body-data',
+                title: '본문 (Info & Data)',
+                content: `<p class="mb-4">자, 일단 여러분이 궁금해하시는 팩트부터 짚고 넘어갈게요. 하지만 그냥 나열하면 재미없으니까, 제 사견을 듬뿍 담은 <strong>'실전 분석표'</strong>로 정리했습니다. 이거 AI도 못 긁어가는 제 영업 비밀인데(웃음), 우리 이웃님들한테만 공개합니다.</p>
+                <div class="overflow-x-auto mb-4 border rounded-lg bg-white shadow-sm">
+                    <table class="min-w-full text-xs text-left text-gray-700">
+                        <thead class="bg-gray-50 border-b"><tr><th class="px-2 py-2">순위</th><th class="px-2 py-2">직업</th><th class="px-2 py-2">평균 연봉</th><th class="px-2 py-2 text-[#03C75A]">추천도(내 맘대로)</th><th class="px-2 py-2">한 줄 코멘트</th></tr></thead>
+                        <tbody class="divide-y">
+                            <tr><td class="px-2 py-2 font-bold">1위</td><td class="px-2 py-2">기업 임원</td><td class="px-2 py-2">1.9억~</td><td class="px-2 py-2">★☆☆☆☆</td><td class="px-2 py-2">돈은 벌지만 수명이 깎임. 파리 목숨.</td></tr>
+                            <tr><td class="px-2 py-2 font-bold">2위</td><td class="px-2 py-2">도선사</td><td class="px-2 py-2">1.5억~</td><td class="px-2 py-2">★★★★☆</td><td class="px-2 py-2">바다 좋아하면 천직. 과정이 고시급.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mb-4">표를 보시면 아시겠지만, <strong>2026년 직업 연봉 순위</strong> 상위권은 대부분 '시간'과 '건강'을 갈아 넣어야 하는 직업들입니다.</p>`,
+                explanation: `<strong>3. 구조화된 데이터 (DIA+ 로직)</strong><br>줄글로만 정보를 나열하지 마세요. <strong>표(Table)나 리스트</strong> 형태의 구조화된 데이터는 네이버 검색 로직(DIA+)이 "고급 정보"로 인식하게 만듭니다. 또한, '추천도(내 맘대로)' 같은 주관적 항목을 넣어 독창성을 더했습니다.`,
+                tags: ['DIA+ 로직', '데이터 구조화', '전문성 강조']
+            },
+            {
+                id: 'sec-retention',
+                title: '결론 및 가두리 (Retention)',
+                content: `<p class="mb-4">답답해하실 필요 없습니다. 제가 그랬던 것처럼, 여러분도 충분히 '연봉 순위' 밖의 세상에서 부자가 될 수 있으니까요.</p><p class="mb-4">제가 맨땅에 헤딩하면서 깨달은 <strong>'회사 안 다니고 월 300만 원 파이프라인 만드는 현실적인 방법 3가지'</strong>를 정리해 둔 비밀 칼럼이 있습니다.</p><div class="bg-green-50 border border-green-200 p-4 rounded-lg text-center"><p class="font-bold text-green-800 mb-2">🎁 선착순 무료 공유</p><p class="text-sm text-green-700 mb-2">아래 <strong>'서로이웃'</strong> 추가하시고 비밀 댓글 남겨주시면,<br>해당 칼럼 링크를 몰래 보내드릴게요.</p><button class="bg-[#03C75A] text-white px-4 py-2 rounded text-sm font-bold mt-2 hover:bg-green-600">서로이웃 추가하고 인생 치트키 받기</button></div>`,
+                explanation: `<strong>4. 가두리 양식장 (체류시간 증대)</strong><br>독자가 글을 읽고 바로 이탈하면 지수에 도움이 안 됩니다. 관련 전자책이나 비공개 칼럼을 미끼로 <strong>서로이웃 추가와 댓글</strong>을 유도하세요. 이는 체류 시간을 늘리고 블로그 지수를 폭발적으로 성장시킵니다.`,
+                tags: ['체류시간 증대', '이웃 증가', '댓글 유도']
+            }
+        ];
+
+        // --- FUNCTIONS ---
+
+        function nav(pageId) {
+            // Update Nav State
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-[#03C75A]', 'font-bold'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.add('text-gray-500'));
+            
+            const btn = document.getElementById(`nav-${pageId}`);
+            btn.classList.add('active', 'text-[#03C75A]', 'font-bold');
+            btn.classList.remove('text-gray-500');
+
+            // Hide all sections
+            document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected section
+            const view = document.getElementById(`view-${pageId}`);
+            view.classList.remove('hidden');
+
+            // Trigger specific renders
+            if(pageId === 'strategy') renderCharts();
+            if(pageId === 'diagnosis') switchDiagnosis('title'); // Default
+            if(pageId === 'blueprint') renderBlueprint();
+        }
+
+        let chartsRendered = false;
+        function renderCharts() {
+            if(chartsRendered) return;
+            chartsRendered = true;
+
+            // Chart 1: Keyword Strategy
+            const ctx1 = document.getElementById('keywordChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['정답형 (정보)', '구입형 (광고)', '경험형 (블루오션)'],
+                    datasets: [{
+                        label: '상위노출 난이도',
+                        data: [90, 95, 30], // Lower is better for user, but let's invert for opportunity
+                        backgroundColor: '#e5e7eb',
+                        order: 2
+                    }, {
+                        label: '노출 기회 (ROI)',
+                        data: [10, 5, 95],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#03C75A'],
+                        order: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: '키워드 유형별 기회 분석' } },
+                    scales: { y: { beginAtZero: true, max: 100, display: false } }
+                }
+            });
+
+            // Chart 2: Content Ratio
+            const ctx2 = document.getElementById('contentChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['정보/팩트 (Structured Data)', '감성/스토리 (Originality)', '가두리/홍보'],
+                    datasets: [{
+                        data: [40, 40, 20],
+                        backgroundColor: ['#3b82f6', '#03C75A', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } }
+                }
+            });
+        }
+
+        function switchDiagnosis(type) {
+            // Update Buttons
+            ['title', 'intro', 'body'].forEach(t => {
+                const btn = document.getElementById(`diag-btn-${t}`);
+                if(t === type) {
+                    btn.classList.remove('bg-white', 'text-gray-500', 'border-gray-200');
+                    btn.classList.add('bg-[#03C75A]', 'text-white', 'border-transparent', 'shadow');
+                } else {
+                    btn.classList.add('bg-white', 'text-gray-500', 'border-gray-200');
+                    btn.classList.remove('bg-[#03C75A]', 'text-white', 'border-transparent', 'shadow');
+                }
+            });
+
+            // Update Content
+            const data = diagnosisData[type];
+            document.getElementById('diag-content-before').innerHTML = data.before.content;
+            document.getElementById('diag-analysis-before').innerHTML = data.before.analysis;
+            document.getElementById('diag-content-after').innerHTML = data.after.content;
+            document.getElementById('diag-analysis-after').innerHTML = data.after.analysis;
+        }
+
+        function renderBlueprint() {
+            const container = document.getElementById('blueprint-container');
+            if(container.children.length > 0) return; // Already rendered
+
+            blueprintSections.forEach((section, index) => {
+                const div = document.createElement('div');
+                div.className = `p-4 mb-4 border-2 border-transparent hover:border-[#03C75A] rounded-lg cursor-pointer transition bg-gray-50 hover:bg-white group`;
+                div.onclick = () => highlightBlueprint(index);
+                div.innerHTML = `
+                    <div class="text-xs font-bold text-gray-400 mb-2 group-hover:text-[#03C75A] uppercase tracking-wider">${section.title}</div>
+                    <div class="text-sm text-gray-800 pointer-events-none">${section.content}</div>
+                `;
+                container.appendChild(div);
+            });
+            
+            // Auto select first
+            highlightBlueprint(0);
+        }
+
+        function highlightBlueprint(index) {
+            const section = blueprintSections[index];
+            // Highlight list item
+            const container = document.getElementById('blueprint-container');
+            Array.from(container.children).forEach((child, i) => {
+                if(i === index) {
+                    child.classList.add('border-[#03C75A]', 'bg-white', 'shadow-md');
+                    child.classList.remove('border-transparent', 'bg-gray-50');
+                } else {
+                    child.classList.remove('border-[#03C75A]', 'bg-white', 'shadow-md');
+                    child.classList.add('border-transparent', 'bg-gray-50');
+                }
+            });
+
+            // Update Explanation
+            const explainBox = document.getElementById('blueprint-explanation');
+            explainBox.innerHTML = `
+                <h4 class="text-xl font-bold text-white mb-4">${section.title}</h4>
+                <div class="text-gray-300 leading-relaxed text-sm space-y-4">${section.explanation}</div>
+            `;
+            
+            const tagBox = document.getElementById('blueprint-tags');
+            tagBox.innerHTML = section.tags.map(tag => `<span class="bg-[#03C75A] bg-opacity-20 text-[#03C75A] px-2 py-1 rounded text-xs border border-[#03C75A] border-opacity-30">#${tag}</span>`).join('');
+        }
+
+        // Initialize default view
+        nav('summary');
+
+    </script>
+</body>
+</html>
