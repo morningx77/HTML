@@ -16,18 +16,18 @@
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        /* Interactive Blueprint Styles */
+        .blueprint-section { border: 1px solid #e5e7eb; background-color: #ffffff; transition: all 0.2s; }
+        .blueprint-section:hover { background-color: #f3e8ff; border-color: #a855f7; cursor: pointer; transform: translateX(2px); }
+        .blueprint-section.active { background-color: #ffffff; border-color: #8b5cf6; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15); border-left: 4px solid #8b5cf6; }
+        
+        /* Blog Content Specific Styles */
+        .blog-content p { margin-bottom: 1.2rem; line-height: 1.7; color: #374151; }
+        .blog-content strong { color: #111827; font-weight: 700; background: linear-gradient(120deg, #e9d5ff 0%, #e9d5ff 100%); background-repeat: no-repeat; background-size: 100% 40%; background-position: 0 90%; }
     </style>
     <!-- Chosen Palette: "Entertainment Pop" - Purple (#8b5cf6) accent for creativity, mixed with dark gray for professionalism -->
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
-
-    <!-- Application Structure Plan:
-         1. Header: Branding for 'Cheomkok' Consulting.
-         2. Hero (Summary): The "AI Crisis" warning for Entertainment blogs.
-         3. Strategy: 3 Key shifts (Target, Title, Content) + Traffic Mix Chart.
-         4. Diagnosis: Interactive Before/After of the "Gugudan Hana" post.
-         5. Blueprint: Dissecting the optimized post structure.
-    -->
 
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -189,43 +189,44 @@
         </section>
 
         <!-- VIEW: BLUEPRINT -->
-        <section id="view-blueprint" class="hidden fade-in space-y-8">
-            <div class="flex flex-col md:flex-row items-center justify-between">
+        <section id="view-blueprint" class="hidden fade-in space-y-8 h-[700px]">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-6">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-900">실전 예시 분석</h2>
-                    <p class="text-gray-500 mt-2">홈판 노출을 위한 최적화 포스팅 구조도</p>
+                    <p class="text-gray-500 mt-2">왼쪽의 <strong class="text-purple-600">블로그 화면</strong>을 클릭하면 숨겨진 전략이 보입니다.</p>
                 </div>
-                <div class="mt-4 md:mt-0 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg text-sm font-medium animate-pulse">
-                    👈 왼쪽 섹션을 클릭하여 전략 해설을 확인하세요
+                <div class="hidden md:block px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-sm border border-yellow-200 animate-pulse">
+                    🖱️ 블로그 글의 문단을 직접 클릭해보세요! (전략 해설이 나옵니다)
                 </div>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8 h-[600px]">
-                <!-- Interactive List -->
-                <div class="lg:w-7/12 bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col">
-                    <div class="bg-gray-50 p-3 border-b border-gray-200 flex justify-between items-center">
-                        <span class="text-xs font-bold text-gray-500">OPTIMIZED POST PREVIEW</span>
-                        <div class="flex space-x-1">
-                            <div class="w-2 h-2 rounded-full bg-red-400"></div>
-                            <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
-                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                        </div>
+                <!-- Interactive Blog Post Preview (Left) -->
+                <div class="lg:w-2/3 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden flex flex-col relative">
+                    <!-- Fake Browser Header -->
+                    <div class="bg-gray-100 p-3 border-b border-gray-200 flex items-center space-x-2 sticky top-0 z-10">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        <div class="ml-4 bg-white rounded px-2 py-0.5 text-xs text-gray-400 w-64">blog.naver.com/cheomkok/22345678</div>
                     </div>
-                    <div id="blueprint-list" class="flex-grow overflow-y-auto custom-scroll p-4 space-y-4">
-                        <!-- JS injected items -->
+                    
+                    <!-- Blog Content Area -->
+                    <div id="blueprint-content" class="flex-grow overflow-y-auto custom-scroll p-8 space-y-6 bg-gray-50 blog-content">
+                        <!-- Content Injected via JS -->
                     </div>
                 </div>
 
-                <!-- Detail Panel -->
-                <div class="lg:w-5/12 bg-gray-900 text-white rounded-xl p-6 shadow-2xl flex flex-col">
-                    <div class="mb-4 pb-4 border-b border-gray-700">
-                        <span class="text-purple-400 text-xs font-bold tracking-widest uppercase">Consultant Note</span>
-                        <h3 id="detail-title" class="text-2xl font-bold mt-1">섹션을 선택하세요</h3>
+                <!-- Strategy Detail Panel (Right) -->
+                <div class="lg:w-1/3 bg-gray-900 text-white rounded-xl p-6 shadow-2xl flex flex-col h-full sticky top-0">
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <span class="text-purple-400 text-xs font-bold tracking-widest uppercase mb-1 block">Strategy Analysis</span>
+                        <h3 id="detail-title" class="text-2xl font-bold leading-tight">분석할 영역을<br>선택해주세요</h3>
                     </div>
-                    <div id="detail-content" class="flex-grow overflow-y-auto custom-scroll text-gray-300 leading-relaxed text-sm">
-                        왼쪽의 포스팅 예시에서 각 부분을 클릭하면, 해당 섹션에 숨겨진 <strong class="text-white">마케팅 의도와 전략</strong>이 이곳에 표시됩니다.
+                    <div id="detail-content" class="flex-grow overflow-y-auto custom-scroll text-gray-300 leading-relaxed text-sm space-y-4">
+                        <p class="opacity-50 italic">왼쪽 블로그 예시 화면에서 제목, 본문, 도표 등을 클릭하면<br>체험콕님을 위한 맞춤 전략 해설이 이곳에 나타납니다.</p>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-700">
+                    <div class="mt-6 pt-4 border-t border-gray-700">
                         <div id="detail-tags" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
@@ -234,8 +235,7 @@
 
     </main>
 
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Visuals via Chart.js & Tailwind. -->
-
+    <!-- JS LOGIC -->
     <script>
         // --- DATA STORE ---
         const diagnosisData = {
@@ -271,36 +271,189 @@
             }
         };
 
-        const blueprintItems = [
+        const blueprintSections = [
             {
-                title: "1. 후킹 제목 (Targeting)",
-                preview: `<h1 class="text-lg font-bold text-gray-900 leading-tight">월 1억 아이돌 포기하고 승무원 택했다? 99%는 절대 못 할 그녀의 충격적 선택</h1>`,
-                desc: "단순히 '근황'을 전하는 게 아닙니다. '돈'과 '선택'이라는 키워드를 넣어 진로를 고민하는 2030 일반 대중까지 타겟을 확장했습니다. 홈판 노출의 핵심은 '내 얘기처럼 느끼게 하는 것'입니다.",
-                tags: ["타겟 확장", "CTR 극대화", "홈판 전략"]
+                id: "bp-title",
+                html: `<div class="p-1">
+                        <div class="text-sm text-purple-600 font-bold mb-1">카테고리: 연예/이슈 > 인생 2막</div>
+                        <h1 class="text-3xl font-bold mb-4 leading-tight text-gray-900 hover:text-purple-700 transition tracking-tight">
+                            월 1억 아이돌 포기하고 승무원 택했다?<br>
+                            <span class="bg-purple-100 px-1 rounded inline-block mt-2">99%는 절대 못 할 그녀의 충격적 선택</span>
+                        </h1>
+                        <div class="text-xs text-gray-400 mb-6 flex items-center">
+                            <span>2026. 1. 30. 10:00</span>
+                            <span class="mx-2">|</span>
+                            <span>조회수 12,450+</span>
+                        </div>
+                        <div class="w-full h-64 bg-gray-200 rounded-xl mb-6 flex flex-col items-center justify-center text-gray-500 text-sm border border-gray-300 gap-3 overflow-hidden relative group">
+                             <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-20 group-hover:opacity-30 transition"></div>
+                             <span class="text-5xl">📸</span>
+                             <span class="font-bold text-lg text-gray-700">썸네일 이미지 전략</span>
+                             <div class="text-xs text-gray-600 bg-white bg-opacity-80 px-4 py-2 rounded-full shadow-sm">
+                                좌측: 화려한 무대 조명 (과거) <span class="mx-2 text-purple-600 font-bold">VS</span> 우측: 단정한 유니폼 (현재)
+                             </div>
+                             <span class="text-xs text-red-500 font-bold mt-1">"연예인이 밥 먹여주냐? 현실 택한 찐 천재" (텍스트 삽입)</span>
+                        </div>
+                       </div>`,
+                analysis: {
+                    title: "1. 타겟 확장 & 클릭률(CTR) 전략",
+                    desc: "단순히 '구구단 하나 근황'이라고 쓰면 팬들만 클릭합니다. 일반 대중은 '그래서 뭐?'하고 지나가죠.<br><br><strong class='text-purple-300'>'월 1억(추정) vs 월 300'</strong>이라는 구체적 수치와 <strong class='text-purple-300'>'99%는 못 할 선택'</strong>이라는 문구로 강한 대비를 주었습니다.<br><br>이는 아이돌 팬이 아닌, <strong>진로를 고민하는 2030 직장인 전체</strong>로 타겟을 확장시켜 홈판 노출 시 클릭을 유도하는 핵심 장치입니다.",
+                    tags: ["타겟 확장", "CTR 극대화", "반상식", "홈판 전략"]
+                }
             },
             {
-                title: "2. 도입부 (Empathy)",
-                preview: `<p class="text-sm text-gray-600">"솔직히 말해볼까요? 여러분이라면 하실 수 있겠어요?"<br>화려한 조명, 수천 명의 함성... 이 모든 걸 걷어차고 직장인의 삶을 선택하는 것.</p>`,
-                desc: "뉴스 앵커 톤을 버리고, 동네 형/언니처럼 말을 겁니다. 독자의 감정을 건드려 '공감'을 이끌어내야 체류 시간이 늘어납니다.",
-                tags: ["대화체", "공감 유도", "이탈 방지"]
+                id: "bp-intro",
+                html: `<div class="space-y-6 mb-8 text-gray-800 leading-relaxed font-serif text-lg">
+                        <p class="font-bold text-xl text-gray-900 border-l-4 border-purple-500 pl-4 py-1">"솔직히 말해볼까요? 여러분이라면 하실 수 있겠어요?"</p>
+                        
+                        <p>화려한 조명, 수천 명의 함성, 그리고 남들이 부러워하는 '연예인'이라는 타이틀.<br>
+                        이 모든 걸 제 발로 걷어차고, 매일 새벽 공항으로 출근해서 감정 노동을 해야 하는 '직장인'의 삶을 선택하는 것.</p>
+                        
+                        <p><strong>아마 저라면 못 했을 겁니다.</strong> "왕년에 내가 말이야~" 하면서 과거의 영광만 파먹고 살았을지도 모르죠. 
+                        대부분의 사람들이 화려함의 덫에 빠져 현실을 직시하지 못하니까요. 연예인병이라는 게 괜히 있는 말이 아니잖아요?</p>
+                        
+                        <p>그런데 여기, 그 어려운 걸 해낸 독종이 있습니다.</p>
+                        
+                        <p>오늘 소개할 이야기는 단순히 걸그룹 멤버가 승무원이 됐다는 가십거리가 아닙니다. 
+                        <span class="bg-yellow-100 px-1 font-bold">불확실한 대박보다 확실한 현실을 택한, 아주 영리하고 용기 있는 한 청춘의 이야기</span>입니다.</p>
+                        
+                        <p class="text-purple-700 font-bold bg-purple-50 p-4 rounded-lg text-center">
+                            "지금 진로 때문에 밤잠 설치고 계신 분들?<br>오늘 이 이야기 보시고 자극 좀 받으셔야 할 겁니다."
+                        </p>
+                       </div>`,
+                analysis: {
+                    title: "2. 공감 유도 & 이탈 방지",
+                    desc: "뉴스 앵커 톤('안녕하세요 체험콕입니다')은 이제 안 통합니다. AI가 쓴 글 같거든요. 대신 <strong class='text-purple-300'>동네 형/언니가 말하는 듯한 대화체(Dialog Mode)</strong>를 사용했습니다.<br><br>'솔직히 말해볼까요?', '저라면 못 했을 겁니다'라는 문장으로 <strong>글쓴이의 인간적인 면모</strong>를 보여주고, 독자가 '나도 못 했을 것 같은데?'라며 감정 이입을 하게 만들어 초반 이탈률을 획기적으로 낮춥니다.",
+                    tags: ["대화체", "공감 유도", "체류시간", "휴먼 터치"]
+                }
             },
             {
-                title: "3. 비교 분석표 (Structure)",
-                preview: `<div class="bg-white border rounded shadow-sm p-2"><table class="w-full text-xs text-center"><thead class="bg-gray-100 font-bold"><tr><td class="p-1">비교</td><td class="p-1">아이돌</td><td class="p-1 text-purple-600">승무원(직장인)</td></tr></thead><tbody class="divide-y"><tr><td class="p-1">직업수명</td><td class="p-1">짧음</td><td class="p-1 font-bold">정년 보장</td></tr><tr><td class="p-1">성공확률</td><td class="p-1">0.1%</td><td class="p-1 font-bold">노력순</td></tr></tbody></table></div>`,
-                desc: "네이버 AI(DIA+ 로직)는 표, 리스트 같은 구조화된 데이터를 좋아합니다. 또한 독자에게 '이 블로거는 분석적이다'라는 신뢰를 줍니다.",
-                tags: ["AI 최적화", "전문성", "가독성"]
+                id: "bp-table",
+                html: `<div class="mb-10">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <span class="w-2 h-8 bg-purple-600 mr-3 rounded"></span>
+                            왜 그녀는 승무원을 택했을까? (현실적 분석)
+                        </h3>
+                        <p class="text-base text-gray-600 mb-6">주인공은 바로 구구단의 하나(신보라) 님입니다. 보통 아이돌은 은퇴하면 유튜브나 연기 쪽으로 빠지는 '공식'이 있죠. 그런데 그녀는 그 공식을 보란 듯이 깼습니다.<br><br>
+                        제가 이 선택이 왜 대단한지, 감성 쫙 빼고 <strong>현실적인 데이터</strong>로 비교해 봤습니다. (이 표를 보면 소름 돋으실 겁니다)</p>
+                        
+                        <div class="border border-gray-200 rounded-xl overflow-hidden shadow-md bg-white">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-100 font-bold text-gray-700 border-b border-gray-200">
+                                    <tr>
+                                        <th class="p-4 w-1/3 bg-gray-50">비교 항목</th>
+                                        <th class="p-4 w-1/3 text-gray-500">아이돌 (화려함)</th>
+                                        <th class="p-4 w-1/3 text-purple-700 bg-purple-50">승무원 (현실)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 text-gray-700 text-base">
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-4 font-bold bg-gray-50">수입 안정성</td>
+                                        <td class="p-4 text-red-500">극단적 (0원 or 대박)</td>
+                                        <td class="p-4 font-bold text-purple-900 bg-purple-50">매달 꽂히는 월급</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-4 font-bold bg-gray-50">직업 수명</td>
+                                        <td class="p-4 text-red-500">20대 후반이면 위기</td>
+                                        <td class="p-4 font-bold text-purple-900 bg-purple-50">정년 보장 / 경력 인정</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-4 font-bold bg-gray-50">성공 확률</td>
+                                        <td class="p-4 text-red-500">0.1% (운칠기삼)</td>
+                                        <td class="p-4 font-bold text-purple-900 bg-purple-50">노력하면 뚫리는 문</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="p-4 font-bold bg-gray-50">핵심 가치</td>
+                                        <td class="p-4 text-gray-500">남들의 사랑/인기</td>
+                                        <td class="p-4 font-bold text-purple-900 bg-purple-50">나의 전문성/커리어</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3 text-right">* 체험콕 자체 분석 데이터입니다.</p>
+                        
+                        <p class="mt-6 text-gray-700 leading-relaxed">
+                            보이시나요? 대부분의 사람들은 왼쪽(아이돌)의 <strong>'가능성'</strong>에 목을 맵니다. "나도 한 방 터지면..." 하면서요.<br>
+                            하지만 신보라 님은 오른쪽(승무원)의 <strong>'확실성'</strong>을 택했습니다. 이건 웬만한 자존감 없이는 절대 불가능한 선택입니다.
+                        </p>
+                       </div>`,
+                analysis: {
+                    title: "3. 구조화된 데이터 (AI 최적화)",
+                    desc: "네이버 검색 로직(DIA+)은 줄글보다 <strong class='text-purple-300'>표, 리스트 같은 구조화된 데이터</strong>를 매우 선호합니다. <br><br>단순히 텍스트로 쓰는 것보다, 이렇게 표로 정리하면 독자에게 '이 블로거는 단순 가십을 넘어 분석을 하는구나'라는 <strong>전문성과 신뢰</strong>를 줍니다.",
+                    tags: ["AI 최적화", "DIA+ 로직", "전문성", "가독성"]
+                }
             },
             {
-                title: "4. 인사이트 (Originality)",
-                preview: `<p class="text-sm text-gray-800 font-medium border-l-4 border-purple-500 pl-3">그녀는 무대 위에서 내려온 게 아닙니다. '하늘'이라는 더 넓고 높은 무대로 출근하고 있는 겁니다.</p>`,
-                desc: "팩트 전달은 누구나 합니다. 하지만 이런 '해석'은 체험콕님만 할 수 있습니다. 이 한 문장이 독자를 팬으로 만듭니다.",
-                tags: ["오리지널리티", "명언 제조", "브랜딩"]
+                id: "bp-insight",
+                html: `<div class="mb-12">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                            <span class="w-2 h-8 bg-purple-600 mr-3 rounded"></span>
+                            체험콕의 시선: 보여지는 삶에서 주체적인 삶으로
+                        </h3>
+                        <p class="mb-6 text-gray-700 text-lg leading-relaxed">
+                            많은 분들이 댓글로 "아깝다, 그 얼굴이 아까워"라고 합니다.<br>
+                            저는 그 댓글이 참 안타깝습니다. 
+                            우리는 언제부터인가 '유명해지는 것'만이 성공이라고 착각하고 사는 것 같습니다.
+                        </p>
+                        
+                        <div class="p-8 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-100 text-gray-800 text-center shadow-md relative">
+                            <div class="absolute top-4 left-6 text-4xl text-purple-200">"</div>
+                            <p class="font-medium text-lg mb-4">내가 땀 흘려 번 돈으로 내 삶을 꾸려가는 것.<br>남의 시선이 아니라 내가 원하는 유니폼을 입는 것.</p>
+                            <p class="font-bold text-xl text-purple-900 mb-4">이것만큼 고귀하고 빛나는 성공이 어디 있나요?</p>
+                            <p class="text-base text-gray-600">
+                                그녀는 무대 위에서 내려온 게 아닙니다.<br>
+                                <span class="bg-yellow-200 px-2 py-1 rounded-md font-bold text-gray-900 inline-block mt-2 transform -rotate-1">'하늘'이라는 더 넓고 높은 무대</span>로<br>
+                                당당하게 출근하고 있는 겁니다.
+                            </p>
+                            <div class="absolute bottom-4 right-6 text-4xl text-purple-200 transform rotate-180">"</div>
+                        </div>
+                       </div>`,
+                analysis: {
+                    title: "4. 오리지널리티 (Insight)",
+                    desc: "팩트 전달은 누구나 합니다. 하지만 이런 <strong class='text-purple-300'>'나만의 해석'과 '통찰'</strong>은 체험콕님만 할 수 있습니다. <br><br>이 문단이 독자가 '체험콕' 브랜드를 기억하게 만드는 결정타입니다. 단순 정보 전달자가 아닌 <strong>'인사이트 에디터'</strong>로 포지셔닝하세요.",
+                    tags: ["오리지널리티", "명언 제조", "브랜딩", "팬덤 구축"]
+                }
             },
             {
-                title: "5. 가두리 (Retention)",
-                preview: `<div class="bg-purple-50 p-3 rounded text-center border border-purple-100"><p class="text-xs font-bold text-purple-800 mb-1">🎁 비공개 칼럼 공유</p><p class="text-xs text-gray-600">남들 시선 끄고 내 인생 떡상시키는 법 (이웃공개)</p></div>`,
-                desc: "글을 읽고 그냥 보내지 마세요. 연예 이슈를 보러 온 사람을 '인생 조언' 칼럼으로 유도하여 내 블로그 안에 가둡니다. 체류시간이 폭발합니다.",
-                tags: ["체류시간", "이웃 증대", "순환 구조"]
+                id: "bp-retention",
+                html: `<div class="bg-gray-800 text-white p-10 rounded-2xl text-center shadow-2xl transform hover:scale-[1.01] transition duration-300 border-4 border-gray-700 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500 rounded-full filter blur-3xl opacity-20 group-hover:opacity-30 transition"></div>
+                        
+                        <p class="text-yellow-400 text-sm font-bold mb-3 tracking-widest uppercase">🎁 이웃 한정 시크릿 칼럼</p>
+                        
+                        <h4 class="font-bold text-2xl mb-4 leading-snug">
+                            "혹시 지금 현실이 초라해 보이시나요?"<br>
+                            <span class="text-gray-300 font-medium text-lg">지금 바로 무대에서 내려와 '내 인생'을 사세요.</span>
+                        </h4>
+                        
+                        <p class="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+                            남들 시선 신경 끄고 내 실력만으로 연봉 2배 떡상시키는<br>
+                            현실적인 방법 3가지를 정리했습니다. (PDF 아님, 바로 읽기 가능)
+                        </p>
+                        
+                        <div class="flex justify-center">
+                            <button class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 px-10 rounded-full shadow-lg transition flex items-center gap-3 text-lg group-hover:shadow-purple-500/50">
+                                <span>🔒 서로이웃 추가하고 칼럼 읽기</span>
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-6">* 선착순 무료 공개 중입니다. 닫히기 전에 확인하세요.</p>
+                       </div>
+                       
+                       <div class="mt-10 text-center pb-10 border-t border-gray-100 pt-6">
+                            <div class="inline-flex flex-wrap justify-center gap-2">
+                                <span class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 hover:bg-gray-200 cursor-pointer">#구구단하나</span>
+                                <span class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 hover:bg-gray-200 cursor-pointer">#승무원합격</span>
+                                <span class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 hover:bg-gray-200 cursor-pointer">#진로고민</span>
+                                <span class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 hover:bg-gray-200 cursor-pointer">#동기부여</span>
+                                <span class="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500 hover:bg-gray-200 cursor-pointer">#인생2막</span>
+                            </div>
+                       </div>`,
+                analysis: {
+                    title: "5. 가두리 전략 (Retention)",
+                    desc: "글을 읽고 그냥 보내지 마세요. 연예 이슈를 보러 온 사람을 '인생 조언' 칼럼으로 유도하여 <strong class='text-purple-300'>내 블로그 안에 가둡니다.</strong> <br><br>이런 '인사이트 칼럼'은 <strong>체류시간</strong>을 폭발시키고 <strong>충성 이웃</strong>을 늘리는 선순환 구조를 만듭니다.",
+                    tags: ["체류시간", "이웃 증대", "순환 구조", "Call To Action"]
+                }
             }
         ];
 
@@ -375,44 +528,45 @@
         }
 
         function renderBlueprint() {
-            const listContainer = document.getElementById('blueprint-list');
-            if (listContainer.innerHTML.trim() !== "") return;
+            const container = document.getElementById('blueprint-content');
+            // Check if already rendered to prevent duplicates
+            if (container.children.length > 0) return;
 
-            blueprintItems.forEach((item, index) => {
+            blueprintSections.forEach((section, index) => {
                 const div = document.createElement('div');
-                div.className = "p-3 border border-gray-100 rounded-lg hover:border-purple-500 hover:shadow-md cursor-pointer transition bg-white group";
-                div.innerHTML = `
-                    <div class="text-xs font-bold text-gray-400 mb-2 group-hover:text-purple-600 uppercase">${item.title}</div>
-                    <div class="pointer-events-none opacity-80">${item.preview}</div>
-                `;
-                div.onclick = () => showDetail(index);
-                listContainer.appendChild(div);
+                div.className = "blueprint-section p-4 border rounded-lg mb-6";
+                div.innerHTML = section.html;
+                div.onclick = () => showBlueprintDetail(index, div);
+                container.appendChild(div);
             });
-
-            showDetail(0); // Show first by default
+            
+            // Auto-select first item after a short delay to ensure DOM update
+            setTimeout(() => {
+                const firstItem = container.firstElementChild;
+                if(firstItem) showBlueprintDetail(0, firstItem);
+            }, 50);
         }
 
-        function showDetail(index) {
-            const item = blueprintItems[index];
-            document.getElementById('detail-title').textContent = item.title;
-            document.getElementById('detail-content').innerHTML = item.desc;
+        function showBlueprintDetail(index, element) {
+            const section = blueprintSections[index];
             
-            const tagsContainer = document.getElementById('detail-tags');
-            tagsContainer.innerHTML = item.tags.map(tag => 
-                `<span class="px-2 py-1 bg-purple-900 text-purple-200 text-xs rounded border border-purple-700">#${tag}</span>`
-            ).join('');
+            // 1. Highlight clicked element
+            document.querySelectorAll('.blueprint-section').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
 
-            // Highlight active item in list
-            const listContainer = document.getElementById('blueprint-list');
-            Array.from(listContainer.children).forEach((child, i) => {
-                if(i === index) {
-                    child.classList.add('border-purple-500', 'ring-1', 'ring-purple-500');
-                    child.classList.remove('border-gray-100');
-                } else {
-                    child.classList.remove('border-purple-500', 'ring-1', 'ring-purple-500');
-                    child.classList.add('border-gray-100');
-                }
-            });
+            // 2. Update Detail Panel
+            const detailTitle = document.getElementById('detail-title');
+            const detailContent = document.getElementById('detail-content');
+            const tagsContainer = document.getElementById('detail-tags');
+
+            if(detailTitle) detailTitle.innerHTML = section.analysis.title;
+            if(detailContent) detailContent.innerHTML = section.analysis.desc;
+            
+            if(tagsContainer) {
+                tagsContainer.innerHTML = section.analysis.tags.map(tag => 
+                    `<span class="px-3 py-1 bg-purple-800 text-purple-200 text-xs font-bold rounded-full border border-purple-600 shadow-md">#${tag}</span>`
+                ).join('');
+            }
         }
 
         // Init
