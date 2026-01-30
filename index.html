@@ -1,23 +1,201 @@
-import os
-import re
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 파일 목록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            margin-top: 8px;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        #fileList {
+            padding: 30px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .file-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .file-item:hover .file-icon {
+            background: white;
+            color: #667eea;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+        
+        .file-count {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .search-box {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📁 HTML 파일 목록</h1>
+            <div class="subtitle">morningx77.github.io/HTML</div>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="파일명 검색...">
+        </div>
+        
+        <div id="fileList"></div>
+        
+        <div id="fileCount" class="file-count"></div>
+    </div>
 
-# 현재 폴더의 모든 HTML 파일 수집
-html_files = sorted([f for f in os.listdir('.') if f.endswith('.html') and f != 'index.html'])
+    <script>
+        // ⭐⭐⭐ 여기에 파일 목록을 추가하세요 ⭐⭐⭐
+        const htmlFiles = [
+            'naver_consulting.html',
+            'naver_consulting_02.html'
+            // 새 파일 추가 시 여기에 한 줄씩 추가
+            // 'new_file.html',
+            // 'another_file.html'
+        ];
 
-# JavaScript 배열 문자열 생성
-files_string = ',\n            '.join([f"'{f}'" for f in html_files])
+        const fileListContainer = document.getElementById('fileList');
+        const fileCountContainer = document.getElementById('fileCount');
+        const searchInput = document.getElementById('searchInput');
 
-# index.html 읽기
-with open('index.html', 'r', encoding='utf-8') as f:
-    content = f.read()
+        // 파일 목록 렌더링 함수
+        function renderFiles(filesToRender) {
+            if (filesToRender.length === 0) {
+                fileListContainer.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+                fileCountContainer.textContent = '';
+                return;
+            }
 
-# 배열 부분만 교체
-pattern = r'const htmlFiles = \[(.*?)\];'
-replacement = f'const htmlFiles = [\n            {files_string}\n        ];'
-new_content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+            let htmlString = '';
+            filesToRender.forEach((fileName, index) => {
+                const fileNameWithoutExt = fileName.replace('.html', '');
+                const fileNumber = index + 1;
+                
+                htmlString += `
+                    <a href="${fileName}" class="file-item">
+                        <div class="file-icon">${fileNumber}</div>
+                        <div class="file-name">${fileNameWithoutExt}</div>
+                    </a>
+                `;
+            });
 
-# 저장
-with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(new_content)
+            fileListContainer.innerHTML = htmlString;
+            fileCountContainer.textContent = `총 ${filesToRender.length}개의 HTML 파일`;
+        }
 
-print(f'✅ {len(html_files)}개 파일 자동 업데이트 완료!')
+        // 검색 기능
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredFiles = htmlFiles.filter(fileName => 
+                fileName.toLowerCase().includes(searchTerm)
+            );
+            renderFiles(filteredFiles);
+        });
+
+        // 초기 렌더링
+        renderFiles(htmlFiles);
+    </script>
+</body>
+</html>
