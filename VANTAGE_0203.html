@@ -2,15 +2,20 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>VANTAGE AI - 통합 워크스페이스 설계안</title>
+    <title>VANTAGE AI - 상세 UI 설계안</title>
     <style>
         :root {
             --border-thick: 2px solid #000;
-            --border-thin: 1px solid #333;
+            --border-thin: 1px solid #e0e0e0;
             --bg-white: #fff;
+            --bg-light: #f9f9f9;
             --bg-black: #000;
-            --text-main: #000;
-            --accent-yellow: #FFD700; /* 체험콕 시그니처 컬러 */
+            --text-main: #111;
+            --text-sub: #666;
+            --accent-yellow: #FFD700;
+            --accent-blue: #0055ff;
+            --accent-green: #00aa00;
+            --accent-red: #ff3300;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,240 +27,81 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
-            position: relative;
         }
 
-        /* --- 1. 사이드바 (LNB) --- */
-        .sidebar {
-            width: 260px;
-            background: var(--bg-white);
-            border-right: var(--border-thick);
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            justify-content: space-between;
-            z-index: 10;
-        }
-
-        .brand {
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 40px;
-            letter-spacing: -1px;
-            text-transform: uppercase;
-        }
-
-        .menu-item {
-            padding: 16px;
-            border: var(--border-thin);
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .menu-item.active {
-            background: var(--bg-black);
-            color: var(--bg-white);
-        }
-
-        /* --- 2. 메인 콘텐츠 --- */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-            position: relative;
-        }
-
-        .header {
-            height: 70px;
-            border-bottom: var(--border-thick);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-        }
-
-        .status-badge {
-            border: 1px solid #000;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .workspace {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* 블로그 탭 */
+        /* --- 레이아웃 & 기본 스타일 (이전과 동일) --- */
+        .sidebar { width: 260px; background: var(--bg-white); border-right: var(--border-thick); display: flex; flex-direction: column; padding: 24px; justify-content: space-between; z-index: 10; }
+        .brand { font-size: 20px; font-weight: 900; margin-bottom: 40px; letter-spacing: -1px; text-transform: uppercase; }
+        .menu-item { padding: 14px; border: 1px solid #eee; margin-bottom: 8px; cursor: pointer; font-weight: 600; border-radius: 6px; }
+        .menu-item.active { background: var(--bg-black); color: var(--bg-white); border-color: #000; }
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; }
+        .header { height: 70px; border-bottom: var(--border-thick); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+        .status-badge { border: 1px solid #000; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .workspace { flex: 1; padding: 30px; overflow-y: auto; background: #fafafa; }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab {
-            padding: 12px 24px;
-            border: var(--border-thick);
-            border-bottom: none;
-            background: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            position: relative;
-            top: 2px;
-        }
+        .tab { padding: 10px 20px; border: var(--border-thick); border-bottom: none; background: #fff; font-weight: bold; cursor: pointer; border-radius: 8px 8px 0 0; }
         .tab.active { background: #000; color: #fff; }
-
-        /* 벤토 그리드 */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            border: var(--border-thick);
-            background: #fff;
-            padding: 24px;
-            position: relative;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border-bottom: 1px dashed #ccc;
-            padding-bottom: 10px;
-        }
-
+        .bento-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .card { border: var(--border-thick); background: #fff; padding: 24px; border-radius: 12px; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .card-title { font-weight: 800; font-size: 16px; }
 
-        /* 파이프라인 */
-        .pipeline-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 40px 0;
-            position: relative;
-        }
-
-        .pipeline-container::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #ccc;
-            z-index: 0;
-        }
-
-        .step {
-            width: 100px;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-            background: #fff;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            background: #fff;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
+        /* 파이프라인 스타일 */
+        .pipeline-container { display: flex; justify-content: space-between; align-items: center; margin: 30px 0; position: relative; }
+        .pipeline-container::before { content: ''; position: absolute; top: 20px; left: 0; width: 100%; height: 2px; background: #e0e0e0; z-index: 0; }
+        .step { width: 90px; text-align: center; position: relative; z-index: 1; cursor: pointer; transition: transform 0.2s; }
+        .step:hover { transform: translateY(-3px); }
+        .step-circle { width: 40px; height: 40px; border: 2px solid #ccc; border-radius: 50%; background: #fff; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         .step.completed .step-circle { background: #000; color: #fff; border-color: #000; }
-        .step.active .step-circle { border: 3px solid #000; width: 45px; height: 45px; }
+        .step.active .step-circle { border: 3px solid var(--accent-yellow); width: 44px; height: 44px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
 
-        /* 이미지 미리보기 */
-        .preview-area {
-            background: #f9f9f9;
-            height: 300px;
-            border: 1px dashed #999;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* 버튼 스타일 */
+        .btn-action { width: 100%; padding: 14px; background: #000; color: #fff; font-weight: bold; cursor: pointer; border: none; border-radius: 8px; margin-bottom: 10px; transition: background 0.2s; }
+        .btn-action:hover { background: #333; }
+        .btn-secondary { width: 100%; padding: 10px; background: #fff; border: 1px solid #ccc; font-weight: bold; cursor: pointer; border-radius: 8px; }
+        .btn-xs { padding: 4px 8px; font-size: 11px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; }
 
-        .identity-border-mockup {
-            width: 220px;
-            height: 220px;
-            border: 4px solid var(--accent-yellow); /* 노란 테두리 고정 반영 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background: #eee;
-        }
-
-        .btn-action {
-            width: 100%;
-            padding: 15px;
-            background: #000;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            margin-bottom: 10px;
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 10px;
-            background: #fff;
-            border: var(--border-thin);
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* --- 상세 레이어 (Slide-out) --- */
-        .side-layer {
-            position: absolute;
-            top: 0;
-            right: -100%; 
-            width: 450px;
-            height: 100%;
-            background: #fff;
-            border-left: var(--border-thick);
-            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-            padding: 40px;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-        }
-
+        /* --- 상세 레이어 (Overlay) 공통 --- */
+        .side-layer { position: absolute; top: 0; right: -100%; width: 500px; height: 100%; background: #fff; border-left: var(--border-thick); transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1); z-index: 100; display: flex; flex-direction: column; box-shadow: -20px 0 50px rgba(0,0,0,0.1); }
         .side-layer.open { right: 0; }
+        .layer-header { padding: 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .layer-content { padding: 25px; overflow-y: auto; flex: 1; background: #fafafa; }
+        .layer-footer { padding: 20px; border-top: 1px solid #eee; background: #fff; }
+        .close-btn { cursor: pointer; font-size: 24px; padding: 5px; }
 
-        .layer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+        /* --- 상세 UI 컴포넌트들 --- */
+        .section-label { font-size: 12px; font-weight: 700; color: #666; text-transform: uppercase; margin-bottom: 8px; display: block; margin-top: 20px; }
+        .section-label:first-child { margin-top: 0; }
 
-        .close-btn { cursor: pointer; font-weight: 900; font-size: 20px; }
+        /* 데이터 리스트 (Intel) */
+        .data-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; }
+        .source-tag { display: inline-block; padding: 2px 6px; font-size: 10px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+        .tag-naver { background: #03C75A; color: #fff; }
+        .tag-insta { background: #E1306C; color: #fff; }
 
-        /* 로그 드로어 */
-        .log-drawer {
-            height: 150px;
-            border-top: var(--border-thick);
-            background: #111;
-            color: #0f0;
-            padding: 15px 30px;
-            font-family: monospace;
-            font-size: 13px;
-            overflow-y: auto;
-            cursor: pointer;
-        }
-        .menu-item.active a { color: var(--bg-white); text-decoration: none; }
+        /* 에디터 (Editor) */
+        .editor-toolbar { display: flex; gap: 5px; margin-bottom: 10px; }
+        .ratio-bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; display: flex; margin: 10px 0; }
+        .ratio-info { background: #000; width: 60%; }
+        .ratio-emotion { background: var(--accent-yellow); width: 40%; }
+        .textarea-box { width: 100%; height: 300px; border: 1px solid #ccc; border-radius: 6px; padding: 15px; font-family: 'Pretendard'; line-height: 1.6; resize: none; }
+
+        /* 이미지 스튜디오 (Studio) */
+        .canvas-area { width: 100%; height: 280px; background-color: #e0e0e0; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 10px 10px; border: 1px solid #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .brush-toolbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #fff; padding: 5px 10px; border-radius: 20px; display: flex; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .tool-icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; }
+        .tool-icon:hover { background: #eee; }
+        .tool-icon.active { background: #000; color: #fff; }
+        
+        .img-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+        .img-thumb { aspect-ratio: 1/1; background: #ddd; border-radius: 4px; cursor: pointer; position: relative; }
+        .img-thumb.selected { border: 2px solid var(--accent-yellow); }
+
+        /* OSMU & Log */
+        .platform-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; }
+        .log-line { font-family: monospace; font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+        .log-time { color: #888; margin-right: 8px; }
+
     </style>
 </head>
 <body>
@@ -263,25 +109,23 @@
     <nav class="sidebar">
         <div>
             <div class="brand">VANTAGE AI</div>
-            <div class="menu-item"><a href="VANTAGE_0101">01. 대시보드</a></div>
-            <div class="menu-item active"><a href="VANTAGE_0201"></a>02. 워크스페이스</a></div>
-            <div class="menu-item"><a href="VANTAGE_0301"></a>03. 스튜디오</a></div>
-            <div class="menu-item"><a href="VANTAGE_0401"></a>04. 인텔리전스</a></div>
+            <div class="menu-item">01. 대시보드</div>
+            <div class="menu-item active">02. 워크스페이스</div>
+            <div class="menu-item" onclick="openLayer('studio-layer')">03. 스튜디오</div>
+            <div class="menu-item" onclick="openLayer('intel-layer')">04. 인텔리전스</div>
         </div>
         <div>
-            <div class="menu-item"><a href="VANTAGE_0001"></a>05. 설정</a></div>
-            <div style="font-size: 12px; color: #666; margin-top: 10px;">
-                사용자: 체험콕 (Cheheomkok)<br>플랜: 프로 (Pro)
-            </div>
+            <div class="menu-item">05. 설정</div>
+            <div style="font-size: 12px; color: #666; margin-top: 10px;">사용자: 체험콕<br>플랜: PRO</div>
         </div>
     </nav>
 
     <main class="main-content">
         <header class="header">
-            <div class="breadcrumbs"><strong>워크스페이스</strong> / 파이프라인 현황</div>
-            <div class="system-status">
-                <span class="status-badge">API: 온라인</span>
-                <span class="status-badge">지연시간: 42ms</span>
+            <div><strong>워크스페이스</strong> / 파이프라인 관리</div>
+            <div>
+                <span class="status-badge" style="background:#eaffea; color:green;">● 시스템 정상</span>
+                <span class="status-badge">API 잔액: $14.20</span>
             </div>
         </header>
 
@@ -295,18 +139,17 @@
             <div class="bento-grid">
                 <div class="card" style="grid-column: 1 / 2;">
                     <div class="card-header">
-                        <span class="card-title">자동화 파이프라인 <small>(단계 클릭 시 상세 편집)</small></span>
-                        <span class="status-badge">상태: 실행 중</span>
+                        <span class="card-title">자동화 파이프라인</span>
+                        <button class="btn-xs">일시정지</button>
                     </div>
-                    
-                    <div style="margin-bottom: 15px; font-size: 14px;">
-                        <strong>진행 키워드:</strong> "아이브 신곡 챌린지 비하인드"
+                    <div style="font-size: 14px; color: #444; margin-bottom: 10px;">
+                        Target Keyword: <strong>"아이브 신곡 챌린지"</strong>
                     </div>
 
                     <div class="pipeline-container">
                         <div class="step completed" onclick="openLayer('intel-layer')">
                             <div class="step-circle">✓</div>
-                            <div>키워드 분석</div>
+                            <div>분석 완료</div>
                         </div>
                         <div class="step completed">
                             <div class="step-circle">✓</div>
@@ -314,102 +157,243 @@
                         </div>
                         <div class="step completed" onclick="openLayer('editor-layer')">
                             <div class="step-circle">✓</div>
-                            <div>본문 생성</div>
+                            <div>초안 생성</div>
                         </div>
                         <div class="step active" onclick="openLayer('studio-layer')">
                             <div class="step-circle">↻</div>
-                            <div>이미지 스튜디오</div>
+                            <div>이미지<br><small>작업중</small></div>
                         </div>
                         <div class="step">
-                            <div class="step-circle">대기</div>
-                            <div>최종 검수</div>
+                            <div class="step-circle">Wait</div>
+                            <div>발행 대기</div>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 30px; border: 1px solid #eee; padding: 15px; font-size: 13px; background: #fafafa;">
-                        <strong>현재 작업:</strong> DALL-E 3를 활용한 연예 블로그 전용 이미지 생성 중...
+                    <div style="background: #f0f0f0; padding: 12px; border-radius: 6px; font-size: 13px; display: flex; justify-content: space-between;">
+                        <span>🚀 <strong>Current Task:</strong> Applying 'Cheheomkok' Watermark...</span>
+                        <span>72%</span>
                     </div>
                 </div>
 
                 <div class="card" style="grid-column: 2 / 3; grid-row: 1 / 3;">
-                    <div class="card-header">
-                        <span class="card-title">출력물 미리보기</span>
-                    </div>
-
-                    <div class="preview-area">
-                        <div class="identity-border-mockup">
-                            이미지 미리보기
-                            <div style="position:absolute; top:10px; right:10px; border:1px solid #000; padding:2px; font-size:10px; background:#fff; opacity:0.5;">체험콕</div>
+                    <div class="card-header"><span class="card-title">출력물 미리보기</span></div>
+                    <div style="background: #f9f9f9; height: 240px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px dashed #ccc;">
+                        <div style="width: 180px; height: 180px; border: 4px solid var(--accent-yellow); background: #eee; position: relative; display: flex; align-items: center; justify-content: center;">
+                            [IMG]
+                            <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.8); padding: 2px 5px; font-size: 10px; border: 1px solid #000;">체험콕</div>
                         </div>
                     </div>
-
-                    <button class="btn-action" onclick="alert('모바일 기기로 검수 요청을 전송했습니다.')">📱 모바일로 보내서 검수하기</button>
-                    <button class="btn-secondary" onclick="openLayer('osmu-layer')">🔄 타 플랫폼 변환 (OSMU)</button>
-                    
-                    <div style="margin-top: 20px; font-size: 12px;">
-                         <strong>미디어 가드 체크:</strong>
-                         <div style="display:flex; justify-content:space-between; margin-top:5px;"><span>저작권 위험도</span> <span style="color:green;">안전 (Safe)</span></div>
-                    </div>
+                    <button class="btn-action" onclick="alert('모바일 링크 전송 완료')">📱 모바일 검수 보내기</button>
+                    <button class="btn-secondary" onclick="openLayer('osmu-layer')">🔄 OSMU 변환 설정</button>
                 </div>
 
-                <div class="card" onclick="openLayer('intel-layer')" style="cursor:pointer;">
-                    <div class="card-header"><span class="card-title">데이터 인사이트</span></div>
-                    <div style="display: flex; gap: 20px;">
-                        <div style="flex: 1;"><strong>검색량</strong><div style="font-size: 24px; font-weight: bold;">1.2M ▲</div></div>
-                        <div style="flex: 1;"><strong>경쟁 수준</strong><div style="font-size: 24px; font-weight: bold;">낮음 (롱테일)</div></div>
+                <div class="card" onclick="openLayer('intel-layer')" style="cursor: pointer;">
+                    <div class="card-header"><span class="card-title">데이터 인텔리전스</span></div>
+                    <div style="display: flex; gap: 15px;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; color: #666;">검색량 (월간)</div>
+                            <div style="font-size: 22px; font-weight: 800;">1,240,000</div>
+                            <div style="font-size: 11px; color: red;">▲ 12.5%</div>
+                        </div>
+                        <div style="flex: 1; border-left: 1px solid #eee; padding-left: 15px;">
+                            <div style="font-size: 12px; color: #666;">경쟁 강도</div>
+                            <div style="font-size: 22px; font-weight: 800;">Medium</div>
+                            <div style="font-size: 11px; color: blue;">진입 적합</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="log-drawer" onclick="openLayer('log-layer')">
-            <div style="border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;"><strong>터미널 로그</strong> (클릭하여 확장)</div>
-            <div>[14:02:45] 이미지 생성 엔진 가동 중...</div>
-            <div>[14:02:46] '연예' 프로필 적용 완료 (노란 테두리 & 워터마크 합성).</div>
-        </footer>
+        <div style="height: 120px; background: #111; color: #0f0; padding: 15px; font-family: monospace; font-size: 12px; cursor: pointer;" onclick="openLayer('log-layer')">
+            <div style="border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 5px;"><strong>TERMINAL LOG</strong> (Click to Expand)</div>
+            <div>[14:02:45] INFO: Image generation started (DALL-E 3)</div>
+            <div>[14:02:46] INFO: Applying border effect (Width: 4px, Color: #FFD700)</div>
+        </div>
 
         <div id="intel-layer" class="side-layer">
-            <div class="layer-header"><h2>인텔리전스 상세</h2><span class="close-btn" onclick="closeLayers()">✕</span></div>
+            <div class="layer-header">
+                <h2>📊 인텔리전스 분석</h2>
+                <span class="close-btn" onclick="closeLayers()">×</span>
+            </div>
             <div class="layer-content">
-                <p><strong>수집 소스:</strong> 네이버 뉴스, 인스타그램 트렌드</p><br>
-                <div style="border:1px solid #000; padding:15px;"><strong>CSS 셀렉터 상태:</strong> 정상 작동 중</div>
+                <span class="section-label">RAG 데이터 소스 (4/4 완료)</span>
+                <div class="data-item">
+                    <div><span class="source-tag tag-naver">NEWS</span> 네이버 연예 뉴스</div>
+                    <span style="font-size:12px; color:green;">● 수집됨</span>
+                </div>
+                <div class="data-item">
+                    <div><span class="source-tag tag-insta">INSTA</span> #아이브_챌린지</div>
+                    <span style="font-size:12px; color:green;">● 수집됨</span>
+                </div>
+                <div class="data-item">
+                    <div><span class="source-tag" style="background:#555; color:#fff;">BLOG</span> 경쟁 블로그 리뷰</div>
+                    <span style="font-size:12px; color:green;">● 3건 확보</span>
+                </div>
+
+                <span class="section-label">키워드 분석 리포트</span>
+                <div style="background:#fff; border:1px solid #eee; padding:15px; border-radius:6px;">
+                    <p style="font-size:13px; margin-bottom:5px;"><strong>추천 전략:</strong> 롱테일 키워드 공략</p>
+                    <p style="font-size:12px; color:#666;">"아이브 신곡" 대신 "아이브 신곡 안유진 의상 정보"로 접근 시 상위 노출 확률 85% 예상.</p>
+                </div>
+                
+                <span class="section-label" style="margin-top:20px;">시스템 관리</span>
+                <button class="btn-secondary">소스 매니저 (CSS 셀렉터) 점검</button>
+            </div>
+            <div class="layer-footer">
+                <button class="btn-action">분석 데이터기반 재생성</button>
             </div>
         </div>
 
         <div id="editor-layer" class="side-layer">
-            <div class="layer-header"><h2>원고 에디터</h2><span class="close-btn" onclick="closeLayers()">✕</span></div>
+            <div class="layer-header">
+                <h2>📝 AI 원고 에디터</h2>
+                <span class="close-btn" onclick="closeLayers()">×</span>
+            </div>
             <div class="layer-content">
-                <p><strong>발행 옵션:</strong> 정보 60 : 감성 40</p>
-                <textarea style="width:100%; height:300px; border:var(--border-thick); padding:15px; margin-top:10px;">
-안녕하세요! 체험콕입니다. 오늘은 정말 핫한 소식을 들고 왔어요...
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="section-label">글 구성 비율 (60:40)</span>
+                    <button class="btn-xs">AI 냄새 제거</button>
+                </div>
+                <div class="ratio-bar">
+                    <div class="ratio-info" title="정보성"></div>
+                    <div class="ratio-emotion" title="감성/경험"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#666; margin-bottom:15px;">
+                    <span>정보 (Info) 60%</span>
+                    <span>감성 (Emo) 40%</span>
+                </div>
+
+                <span class="section-label">본문 편집</span>
+                <div class="editor-toolbar">
+                    <button class="btn-xs"><strong>B</strong></button>
+                    <button class="btn-xs">H1</button>
+                    <button class="btn-xs">H2</button>
+                    <button class="btn-xs">✨ 다듬기</button>
+                </div>
+                <textarea class="textarea-box">
+(도입부)
+안녕하세요! 체험콕입니다. 💛
+오늘은 아이브의 신곡 무대를 보고 깜짝 놀란 이야기를 해볼까 해요. 여러분도 보셨나요?
+
+(정보 섹션)
+이번 신곡 'Supernova'는 발매 1시간 만에 멜론 1위를 차지했는데요... (팩트 체크 완료)
+
+(경험 섹션)
+저는 특히 안유진 님의 의상이 너무 예뻐서 바로 정보를 찾아봤답니다.
                 </textarea>
-                <button class="btn-action" style="margin-top:20px;">AI 냄새 제거 및 재작성</button>
+            </div>
+            <div class="layer-footer">
+                <button class="btn-action">수정사항 저장 및 다음 단계</button>
             </div>
         </div>
 
-        <div id="studio-layer" class="side-layer">
-            <div class="layer-header"><h2>이미지 스튜디오</h2><span class="close-btn" onclick="closeLayers()">✕</span></div>
+        <div id="studio-layer" class="side-layer" style="width: 600px;">
+            <div class="layer-header">
+                <h2>🎨 이미지 스튜디오 & 가드</h2>
+                <span class="close-btn" onclick="closeLayers()">×</span>
+            </div>
             <div class="layer-content">
-                <div style="width:100%; height:250px; background:#eee; border:1px dashed #000; display:flex; align-items:center; justify-content:center;">AI 브러시 영역</div>
-                <button class="btn-action" style="margin-top:20px;">프롬프트 수정 후 재생성</button>
+                <span class="section-label">AI 브러시 편집기</span>
+                <div class="canvas-area">
+                    <div style="font-size:12px; color:#666;">[편집할 이미지가 여기에 로드됩니다]</div>
+                    <div class="brush-toolbar">
+                        <div class="tool-icon active">🖌️</div>
+                        <div class="tool-icon">🖐️</div>
+                        <div class="tool-icon">🗑️</div>
+                        <div class="tool-icon">↩️</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:space-between;">
+                    <span class="section-label">대체 이미지 후보 (Source)</span>
+                    <span style="font-size:11px; color:green;">🛡️ 저작권 필터: 통과 (Safe)</span>
+                </div>
+                <div class="img-grid">
+                    <div class="img-thumb selected"></div>
+                    <div class="img-thumb"></div>
+                    <div class="img-thumb"></div>
+                </div>
+            </div>
+            <div class="layer-footer">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-secondary" style="flex:1;">프롬프트 수정</button>
+                    <button class="btn-action" style="flex:2;">이 이미지로 확정</button>
+                </div>
             </div>
         </div>
 
         <div id="osmu-layer" class="side-layer">
-            <div class="layer-header"><h2>플랫폼 변환 (OSMU)</h2><span class="close-btn" onclick="closeLayers()">✕</span></div>
+            <div class="layer-header">
+                <h2>🔄 멀티 플랫폼 배포 (OSMU)</h2>
+                <span class="close-btn" onclick="closeLayers()">×</span>
+            </div>
             <div class="layer-content">
-                <p>네이버 포스트를 티스토리/워드프레스로 변환합니다.</p><br>
-                <label><input type="checkbox" checked> 티스토리용 HTML 변환</label><br><br>
-                <label><input type="checkbox"> 워드프레스 최적화 배포</label>
-                <button class="btn-action" style="margin-top:30px;">순차 발행 시작</button>
+                <p style="font-size:13px; color:#666; margin-bottom:20px;">네이버 발행 완료 후 타 플랫폼으로 변환하여 순차 발행합니다.</p>
+
+                <div class="platform-row">
+                    <div>
+                        <strong>Tistory (티스토리)</strong>
+                        <div style="font-size:11px; color:#666;">HTML 구조화 변환 대기</div>
+                    </div>
+                    <div>
+                        <input type="checkbox" checked>
+                        <select style="margin-left:5px; padding:4px;">
+                            <option>+1시간 후</option>
+                            <option>+3시간 후</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="platform-row">
+                    <div>
+                        <strong>WordPress</strong>
+                        <div style="font-size:11px; color:#666;">SEO 플러그인 맞춤형</div>
+                    </div>
+                    <div>
+                        <input type="checkbox">
+                        <select style="margin-left:5px; padding:4px;">
+                            <option>+6시간 후</option>
+                            <option>+12시간 후</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <span class="section-label" style="margin-top:20px;">중복 문서 방지 전략</span>
+                <div style="font-size:12px; padding:10px; background:#f0f0f0; border-radius:6px;">
+                    ✅ 플랫폼별 문체 변경 (네이버: 친근 / 티스토리: 전문적)<br>
+                    ✅ 이미지 메타데이터(Exif) 자동 세척<br>
+                    ✅ 문단 구조 재배치 적용됨
+                </div>
+            </div>
+            <div class="layer-footer">
+                <button class="btn-action">스케줄링 저장</button>
             </div>
         </div>
 
-        <div id="log-layer" class="side-layer" style="width: 600px; background: #111; color: #0f0;">
-            <div class="layer-header"><h2 style="color:#fff;">상세 시스템 로그</h2><span class="close-btn" style="color:#fff;" onclick="closeLayers()">✕</span></div>
-            <div class="layer-content" style="font-family:monospace;">
-                <div>[14:02:15] DEBUG: Initiating RAG search...</div>
-                <div>[14:02:46] SUCCESS: Image layer watermark applied (opacity: 0.5).</div>
+        <div id="log-layer" class="side-layer" style="width: 700px; background: #111; color: #fff;">
+            <div class="layer-header" style="background:#222; border-color:#333;">
+                <h2 style="color:#fff;">🖥️ 시스템 상세 로그</h2>
+                <span class="close-btn" style="color:#fff;" onclick="closeLayers()">×</span>
+            </div>
+            <div class="layer-content" style="background:#000; font-family:monospace; color:#ccc;">
+                <div style="margin-bottom:10px;">
+                    <span style="background:#333; padding:2px 6px; border-radius:4px; margin-right:5px; cursor:pointer; color:#fff;">ALL</span>
+                    <span style="padding:2px 6px; cursor:pointer;">INFO</span>
+                    <span style="padding:2px 6px; cursor:pointer;">ERROR</span>
+                    <span style="padding:2px 6px; cursor:pointer; color:yellow;">DEBUG</span>
+                </div>
+                <hr style="border-color:#333; margin-bottom:15px;">
+                
+                <div class="log-line"><span class="log-time">[14:02:15]</span> <span style="color:#4facfe;">INFO</span> Pipeline initiated: Entertainment > IVE_Challenge</div>
+                <div class="log-line"><span class="log-time">[14:02:18]</span> <span style="color:#4facfe;">INFO</span> Connected to Naver Search API (Latency: 45ms)</div>
+                <div class="log-line"><span class="log-time">[14:02:19]</span> <span style="color:yellow;">DEBUG</span> Found 12 related news articles. Parsing...</div>
+                <div class="log-line"><span class="log-time">[14:02:25]</span> <span style="color:#4facfe;">INFO</span> RAG Context built. Vector DB match score: 0.89</div>
+                <div class="log-line"><span class="log-time">[14:02:45]</span> <span style="color:#4facfe;">INFO</span> DALL-E 3 Image generated. Size: 1024x1024</div>
+                <div class="log-line"><span class="log-time">[14:02:46]</span> <span style="color:green;">SUCCESS</span> Watermark applied. Opacity set to 50%.</div>
+            </div>
+            <div class="layer-footer" style="background:#222; border-color:#333;">
+                <button class="btn-xs" style="background:#333; color:#fff; border:none;">로그 다운로드 (.txt)</button>
             </div>
         </div>
 
@@ -420,6 +404,7 @@
             closeLayers();
             document.getElementById(id).classList.add('open');
         }
+
         function closeLayers() {
             const layers = document.querySelectorAll('.side-layer');
             layers.forEach(layer => layer.classList.remove('open'));
