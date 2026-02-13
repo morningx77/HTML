@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>VANTAGE AI - 스튜디오 설계안</title>
+    <style>
+        :root {
+            --border-thick: 2px solid #000;
+            --border-thin: 1px solid #e0e0e0;
+            --bg-white: #fff;
+            --bg-light: #f9f9f9;
+            --bg-black: #000;
+            --text-main: #111;
+            --text-sub: #666;
+            --accent-yellow: #FFD700;
+            --status-review: #FFD700;
+            --status-ready: #00C853;
+            --status-draft: #999;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: #f4f4f4;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- 레이아웃 (공통) --- */
+        .sidebar { width: 260px; background: var(--bg-white); border-right: var(--border-thick); display: flex; flex-direction: column; padding: 24px; justify-content: space-between; z-index: 10; }
+        .brand { font-size: 20px; font-weight: 900; margin-bottom: 40px; letter-spacing: -1px; text-transform: uppercase; }
+        .menu-item { padding: 14px; border: 1px solid #eee; margin-bottom: 8px; cursor: pointer; font-weight: 600; border-radius: 6px; }
+        .menu-item.active { background: var(--bg-black); color: var(--bg-white); border-color: #000; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; }
+        .header { height: 70px; border-bottom: var(--border-thick); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; border: 1px solid #000; display: inline-block; }
+
+        /* --- 스튜디오 전용 레이아웃 (2단 분할) --- */
+        .studio-container { flex: 1; display: flex; overflow: hidden; }
+        
+        /* 1. 좌측: 검수 큐 (Queue List) */
+        .queue-panel { width: 320px; border-right: var(--border-thick); background: #fafafa; display: flex; flex-direction: column; }
+        .queue-header { padding: 20px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .queue-filter { display: flex; gap: 5px; margin-top: 10px; }
+        .filter-tag { padding: 4px 8px; font-size: 11px; border: 1px solid #ccc; border-radius: 12px; cursor: pointer; background: #fff; }
+        .filter-tag.active { background: #000; color: #fff; border-color: #000; }
+        
+        .queue-list { overflow-y: auto; flex: 1; padding: 10px; }
+        .queue-item { background: #fff; border: 1px solid #e0e0e0; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; position: relative; }
+        .queue-item:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .queue-item.selected { border: 2px solid #000; background: #fff; }
+        .q-meta { font-size: 11px; color: #888; margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .q-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
+        .q-blog { font-size: 10px; font-weight: 900; color: #444; text-transform: uppercase; }
+
+        /* 상태 컬러 */
+        .st-review { background: var(--status-review); color: #000; }
+        .st-ready { background: var(--status-ready); color: #fff; border: none; }
+        .st-draft { background: #eee; color: #666; border: 1px solid #ccc; }
+
+        /* 2. 우측: 메인 에디터 (Main Editor) */
+        .editor-panel { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; }
+        .editor-toolbar { height: 50px; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 20px; gap: 10px; background: #fff; }
+        .tool-btn { padding: 6px 10px; font-size: 12px; font-weight: 600; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; }
+        .tool-btn:hover { background: #f0f0f0; }
+        
+        .editor-content { flex: 1; padding: 40px; overflow-y: auto; max-width: 900px; margin: 0 auto; width: 100%; }
+        
+        /* 본문 요소 */
+        .post-meta { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .meta-group label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 5px; }
+        .meta-input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 200px; font-size: 13px; }
+        
+        .post-title-input { font-size: 28px; font-weight: 900; border: none; width: 100%; outline: none; margin-bottom: 20px; color: #000; }
+        .post-body-area { line-height: 1.8; color: #333; min-height: 400px; outline: none; }
+        
+        /* 이미지 블록 */
+        .media-block { margin: 30px 0; border: 1px dashed #ccc; padding: 10px; border-radius: 8px; position: relative; background: #fafafa; text-align: center; }
+        .media-img { max-width: 400px; border: 4px solid var(--accent-yellow); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .media-actions { margin-top: 10px; display: flex; justify-content: center; gap: 10px; }
+        
+        .guard-badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); color: #0f0; font-size: 11px; padding: 4px 8px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        /* 하단 액션 바 */
+        .action-bar { height: 70px; border-top: var(--border-thick); padding: 0 30px; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .btn-primary { background: #000; color: #fff; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; border: none; }
+        .btn-text { background: none; border: none; font-weight: 600; cursor: pointer; color: #666; text-decoration: underline; }
+
+        /* --- 상세 레이어 (Slide-out) --- */
+        .side-layer { position: absolute; top: 0; right: -100%; width: 450px; height: 100%; background: #fff; border-left: var(--border-thick); transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1); z-index: 100; display: flex; flex-direction: column; box-shadow: -20px 0 50px rgba(0,0,0,0.1); }
+        .side-layer.open { right: 0; }
+        .layer-header { padding: 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .layer-content { padding: 25px; overflow-y: auto; flex: 1; background: #fafafa; }
+        .close-btn { cursor: pointer; font-size: 24px; padding: 5px; }
+
+        /* 브러시 도구 */
+        .brush-palette { display: flex; gap: 10px; margin-bottom: 15px; background: #fff; padding: 10px; border-radius: 30px; border: 1px solid #eee; width: fit-content; margin: 0 auto 20px; }
+        .tool-icon { width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+        .tool-icon.active { background: #000; color: #fff; }
+
+        /* 저작권 로그 */
+        .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .log-pass { color: green; font-weight: bold; }
+        .log-warn { color: orange; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div>
+            <div class="brand">VANTAGE AI</div>
+            <div class="menu-item">01. 대시보드</div>
+            <div class="menu-item">02. 워크스페이스</div>
+            <div class="menu-item active">03. 스튜디오</div>
+            <div class="menu-item">04. 인텔리전스</div>
+        </div>
+        <div>
+            <div class="menu-item">05. 설정</div>
+            <div style="font-size: 12px; color: #666; margin-top: 10px;">사용자: 체험콕</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <div><strong>스튜디오</strong> / 콘텐츠 검수 및 편집</div>
+            <div>
+                <button class="tool-btn" style="border-color:#000;">+ 새 글 수동 작성</button>
+            </div>
+        </header>
+
+        <div class="studio-container">
+            
+            <div class="queue-panel">
+                <div class="queue-header">
+                    <strong>검수 대기열 (4)</strong>
+                    <span style="font-size:12px; cursor:pointer;">🔃</span>
+                </div>
+                <div style="padding: 0 20px;">
+                    <div class="queue-filter">
+                        <span class="filter-tag active">전체</span>
+                        <span class="filter-tag">연예</span>
+                        <span class="filter-tag">경제</span>
+                        <span class="filter-tag">건강</span>
+                    </div>
+                </div>
+
+                <div class="queue-list">
+                    <div class="queue-item selected">
+                        <div class="q-meta">
+                            <span class="q-blog">ENTERTAINMENT</span>
+                            <span class="status-badge st-review">검수필요</span>
+                        </div>
+                        <div class="q-title">뉴진스 컴백, 민희진 대표의<br>새로운 전략 분석</div>
+                        <div style="font-size:11px; color:#888;">생성: 10분 전 · AI 모델: GPT-4</div>
+                    </div>
+
+                    <div class="queue-item">
+                        <div class="q-meta">
+                            <span class="q-blog">ECONOMY</span>
+                            <span class="status-badge st-ready">발행대기</span>
+                        </div>
+                        <div class="q-title">비트코인 반감기 이후<br>시장 전망 리포트</div>
+                        <div style="font-size:11px; color:#888;">예약: 오늘 18:00</div>
+                    </div>
+
+                    <div class="queue-item">
+                        <div class="q-meta">
+                            <span class="q-blog">HEALTH</span>
+                            <span class="status-badge st-draft">초안생성</span>
+                        </div>
+                        <div class="q-title">간헐적 단식 16:8<br>실제 2주 체험 후기</div>
+                        <div style="font-size:11px; color:#888;">생성: 1시간 전</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <button class="tool-btn"><strong>B</strong></button>
+                    <button class="tool-btn"><em>I</em></button>
+                    <button class="tool-btn">H1</button>
+                    <button class="tool-btn">H2</button>
+                    <div style="width: 1px; height: 20px; background: #eee; margin: 0 10px;"></div>
+                    <button class="tool-btn" style="color:blue;">✨ AI 문장 다듬기</button>
+                    <button class="tool-btn">맞춤법 검사</button>
+                </div>
+
+                <div class="editor-content">
+                    <div class="post-meta">
+                        <div class="meta-group">
+                            <label>발행 플랫폼</label>
+                            <select class="meta-input">
+                                <option>네이버 블로그 (Main)</option>
+                                <option>티스토리</option>
+                            </select>
+                        </div>
+                        <div class="meta-group">
+                            <label>카테고리</label>
+                            <select class="meta-input">
+                                <option>K-POP / 연예</option>
+                            </select>
+                        </div>
+                        <div class="meta-group">
+                            <label>태그 (Tags)</label>
+                            <input type="text" class="meta-input" value="#뉴진스 #NewJeans #민희진">
+                        </div>
+                    </div>
+
+                    <input type="text" class="post-title-input" value="뉴진스 컴백, 민희진 대표의 새로운 전략 분석 (feat. 체험콕)">
+
+                    <div class="post-body-area" contenteditable="true">
+                        <p>안녕하세요! <strong>체험콕</strong>입니다. 💛</p>
+                        <p>오늘은 K-POP 팬이라면 누구나 기다렸을 소식, 바로 뉴진스의 컴백 이야기를 들고 왔어요.</p>
+                        <br>
+                        <h3>1. 이번 앨범의 컨셉은?</h3>
+                        <p>공개된 티저 이미지를 보면 Y2K 감성을 넘어서는...</p>
+                        
+                        <div class="media-block">
+                            <div class="guard-badge" onclick="openLayer('guard-layer')">
+                                🛡️ Media Guard: Safe
+                            </div>
+                            
+                            <img src="https://via.placeholder.com/400" alt="Generated Image" class="media-img">
+                            <div style="margin-top:5px; font-size:11px; color:#666;">* 체험콕 전용 노란 테두리 적용됨</div>
+                            
+                            <div class="media-actions">
+                                <button class="tool-btn" onclick="openLayer('brush-layer')">🖌️ AI 브러시 편집</button>
+                                <button class="tool-btn">🔄 이미지 교체</button>
+                            </div>
+                        </div>
+
+                        <p>특히 이번 뮤직비디오에서는...</p>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <div>
+                        <button class="btn-text">🗑️ 삭제</button>
+                        <button class="btn-text" style="margin-left:15px;" onclick="alert('모바일로 링크가 전송되었습니다.')">📱 모바일 검수 보내기</button>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span style="font-size:12px; color:#666; margin-right:10px;">마지막 저장: 방금 전</span>
+                        <button class="tool-btn">임시저장</button>
+                        <button class="btn-primary">발행 승인 (Approve)</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="brush-layer" class="side-layer" style="width: 600px;">
+            <div class="layer-header">
+                <h2>🎨 AI 이미지 브러시</h2>
+                <span class="close-btn" onclick="closeLayer('brush-layer')">×</span>
+            </div>
+            <div class="layer-content" style="background: #333; display: flex; flex-direction: column; align-items: center;">
+                
+                <div class="brush-palette">
+                    <div class="tool-icon active" title="Inpaint Brush">🖌️</div>
+                    <div class="tool-icon" title="Eraser">🧼</div>
+                    <div class="tool-icon" title="Hand">🖐️</div>
+                    <div class="tool-icon" title="Undo">↩️</div>
+                </div>
+
+                <div style="width: 400px; height: 400px; background: #444; border: 1px solid #555; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="color: #888;">[IMAGE CANVAS AREA]</span>
+                    <div style="position: absolute; top: 40%; left: 60%; width: 30px; height: 30px; border: 2px solid yellow; border-radius: 50%; box-shadow: 0 0 5px yellow;"></div>
+                </div>
+
+                <div style="width: 100%; padding: 20px; margin-top: auto; background: #fff;">
+                    <label style="font-size:12px; font-weight:bold;">수정할 내용 입력 (Inpainting Prompt)</label>
+                    <div style="display:flex; gap:10px; margin-top:5px;">
+                        <input type="text" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:4px;" value="배경의 네온 사인을 더 밝게 수정해줘">
+                        <button class="btn-primary" style="padding: 10px 20px;">생성</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="guard-layer" class="side-layer">
+            <div class="layer-header">
+                <h2>🛡️ 미디어 가드 리포트</h2>
+                <span class="close-btn" onclick="closeLayer('guard-layer')">×</span>
+            </div>
+            <div class="layer-content">
+                <div style="padding: 20px; background: #f0fdf4; border: 1px solid green; border-radius: 8px; margin-bottom: 20px;">
+                    <strong style="color:green; font-size:16px;">안전함 (Safe)</strong>
+                    <p style="font-size:12px; margin-top:5px;">저작권 및 유해성 검사를 통과했습니다.</p>
+                </div>
+
+                <h3 style="font-size:14px; margin-bottom:10px;">상세 검사 로그</h3>
+                <div style="border: 1px solid #eee; background: #fff; border-radius: 8px;">
+                    <div class="log-item">
+                        <span>인물 초상권 (Public Figure)</span>
+                        <span class="log-pass">PASS</span>
+                    </div>
+                    <div class="log-item">
+                        <span>유해 이미지 필터 (NSFW)</span>
+                        <span class="log-pass">PASS</span>
+                    </div>
+                    <div class="log-item">
+                        <span>워터마크/로고 탐지</span>
+                        <span class="log-pass">CLEAN</span>
+                    </div>
+                    <div class="log-item">
+                        <span>Exif 메타데이터</span>
+                        <span class="log-warn">세척됨 (Scrubbed)</span>
+                    </div>
+                </div>
+
+                <h3 style="font-size:14px; margin-top:30px; margin-bottom:10px;">이미지 소스 정보</h3>
+                <div style="font-size:12px; color:#666; line-height:1.6;">
+                    모델: DALL-E 3<br>
+                    해상도: 1024x1024<br>
+                    생성일: 2026-02-13 14:10:05
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function openLayer(id) {
+            document.getElementById(id).classList.add('open');
+        }
+
+        function closeLayer(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+    </script>
+</body>
+</html>
