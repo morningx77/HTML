@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>VANTAGE AI - Workspace Master (AEO Edition)</title>
+    <style>
+        /* --- [CORE] 테마 변수 (대시보드와 동일한 시스템) --- */
+        :root {
+            --bg-body: #f4f4f4;
+            --bg-sidebar: #fff;
+            --bg-card: #fff;
+            --bg-overlay: #f9f9f9;
+            --text-main: #111;
+            --text-sub: #666;
+
+            --border-thick: 2px solid #000;
+            --border-thin: 1px solid #e0e0e0;
+
+            --accent-yellow: #FFD700;
+            --accent-blue: #2979FF;
+            /* AEO/Link Color */
+            --accent-purple: #9C27B0;
+            /* Agent Color */
+            --status-green: #00C853;
+            --status-red: #FF3D00;
+
+            --btn-bg: #111;
+            --btn-text: #fff;
+            --shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+
+            --toggle-bg: #fff;
+            --toggle-text: #000;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-sidebar: #1e1e1e;
+            --bg-card: #252525;
+            --bg-overlay: #1a1a1a;
+            --text-main: #f0f0f0;
+            --text-sub: #aaa;
+
+            --border-thick: 2px solid #555;
+            --border-thin: 1px solid #444;
+
+            --btn-bg: #FFD700;
+            --btn-text: #000;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --toggle-bg: #333;
+            --toggle-text: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- 레이아웃 --- */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+        }
+
+        .menu-item {
+            padding: 14px;
+            border: var(--border-thin);
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        .menu-item:hover {
+            background: rgba(128, 128, 128, 0.1);
+        }
+
+        .menu-item.active {
+            background: var(--text-main);
+            color: var(--bg-card);
+            border-color: var(--text-main);
+        }
+
+        .user-profile {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 10px;
+            line-height: 1.5;
+            border-top: 1px solid var(--border-thin);
+            padding-top: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            height: 70px;
+            border-bottom: var(--border-thick);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .mode-toggle {
+            padding: 8px 16px;
+            border: 1px solid var(--text-sub);
+            background: var(--toggle-bg);
+            color: var(--toggle-text);
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .workspace-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 탭 메뉴 */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: var(--border-thick);
+            border-bottom: none;
+            background: var(--bg-card);
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            top: 2px;
+            border-radius: 8px 8px 0 0;
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+
+        .tab.active {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border-color: var(--btn-bg);
+            transform: translateY(-2px);
+        }
+
+        .tab-badge {
+            background: var(--status-blue);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+
+        /* 벤토 그리드 */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .card {
+            border: var(--border-thick);
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--text-sub);
+            padding-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: 800;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid var(--text-main);
+        }
+
+        /* [NEW] AEO 스코어 카드 */
+        .aeo-card {
+            background: rgba(41, 121, 255, 0.05);
+            border: 1px solid var(--accent-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .aeo-score {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--accent-blue);
+        }
+
+        .aeo-label {
+            font-size: 11px;
+            color: var(--accent-blue);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* 파이프라인 (확장됨) */
+        .pipeline-wrapper {
+            position: relative;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .pipeline-line {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--border-thin);
+            z-index: 0;
+        }
+
+        .pipeline-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            text-align: center;
+            cursor: pointer;
+            width: 80px;
+            transition: transform 0.2s;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--border-thin);
+            background: var(--bg-card);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .step.completed .step-circle {
+            background: var(--text-main);
+            color: var(--bg-card);
+            border-color: var(--text-main);
+        }
+
+        .step.active .step-circle {
+            border: 3px solid var(--accent-yellow);
+            color: var(--text-main);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .step.active .step-label {
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        /* 프리뷰 & 워터마크 */
+        .preview-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--text-sub);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-img {
+            width: 220px;
+            height: 220px;
+            background: #ddd;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--accent-yellow);
+        }
+
+        .watermark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* [NEW] 에이전트 로그 드로어 */
+        .log-drawer {
+            height: 200px;
+            border-top: var(--border-thick);
+            background: #1a1a1a;
+            color: #ccc;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            overflow-y: auto;
+            cursor: pointer;
+            transition: height 0.3s;
+        }
+
+        .log-drawer:hover {
+            height: 280px;
+        }
+
+        .agent-msg {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .agent-icon {
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .agent-name {
+            font-weight: bold;
+            color: var(--accent-purple);
+            margin-right: 5px;
+        }
+
+        .agent-text {
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .agent-time {
+            color: #666;
+            font-size: 10px;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        /* 버튼 */
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-sub {
+            padding: 8px 12px;
+            border: 1px solid var(--text-sub);
+            background: transparent;
+            color: var(--text-main);
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* --- [OVERLAY] 오버레이 스타일 --- */
+        .overlay {
+            position: absolute;
+            top: 0;
+            right: -700px;
+            width: 600px;
+            height: 100%;
+            background: var(--bg-overlay);
+            border-left: var(--border-thick);
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+            transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .overlay.active {
+            right: 0;
+        }
+
+        .ov-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border-thin);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+        }
+
+        .ov-title {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .ov-close {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .ov-content {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* 테이블 & 폼 */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .detail-table th {
+            text-align: left;
+            padding: 10px 5px;
+            border-bottom: 1px solid var(--text-main);
+            color: var(--text-sub);
+        }
+
+        .detail-table td {
+            padding: 12px 5px;
+            border-bottom: 1px solid var(--border-thin);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-thin);
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-radius: 6px;
+            height: 150px;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div>
+            <div class="brand"><span class="brand-dot"></span> VANTAGE AI</div>
+            <div class="menu-item">01. 대시보드</div>
+            <div class="menu-item active">02. 워크스페이스 <span>●</span></div>
+            <div class="menu-item">03. 스튜디오</div>
+            <div class="menu-item">04. 인텔리전스</div>
+        </div>
+        <div>
+            <div class="menu-item">05. 설정</div>
+            <div class="user-profile">
+                사용자: 체험콕 (Admin)<br>
+                Agent Mode: Collaborative
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <div><strong>워크스페이스</strong> / Pipeline Automation</div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button class="mode-toggle" onclick="toggleTheme()">🌗 다크 모드</button>
+                <div
+                    style="border: 1px solid var(--text-main); padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                    Agents Active</div>
+            </div>
+        </header>
+
+        <div class="workspace-area">
+
+            <div class="tabs">
+                <div class="tab active">연예 (Ent) <span class="tab-badge">Running</span></div>
+                <div class="tab">경제 (Eco) <span class="tab-badge" style="background:#ccc; color:#000;">Wait</span></div>
+                <div class="tab">건강 (Health)</div>
+            </div>
+
+            <div class="bento-grid">
+
+                <div class="card" style="grid-column: 1 / 2;">
+                    <div class="card-header">
+                        <span class="card-title">🚀 에이전트 협업 파이프라인</span>
+                        <div class="status-badge" style="color:var(--status-blue); border-color:var(--status-blue);">
+                            STATUS: FACT CHECKING</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.03); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 5px;">Target Keyword</div>
+                        <div style="font-size: 18px; font-weight: 900;">"아이브 신곡 뮤비 해석 & 의상 정보"</div>
+                    </div>
+
+                    <div class="pipeline-wrapper">
+                        <div class="pipeline-line"></div>
+                        <div class="pipeline-steps">
+                            <div class="step completed" onclick="openOverlay('keyword-overlay')">
+                                <div class="step-circle">✓</div>
+                                <div class="step-label">키워드</div>
+                            </div>
+                            <div class="step completed" onclick="openOverlay('rag-overlay')">
+                                <div class="step-circle">✓</div>
+                                <div class="step-label">자료수집</div>
+                            </div>
+                            <div class="step completed" onclick="openOverlay('draft-overlay')">
+                                <div class="step-circle">✓</div>
+                                <div class="step-label">초안생성</div>
+                            </div>
+                            <div class="step active" onclick="openOverlay('fact-overlay')">
+                                <div class="step-circle"
+                                    style="border-color:var(--accent-blue); color:var(--accent-blue);">🛡️</div>
+                                <div class="step-label" style="color:var(--accent-blue);">팩트/링크</div>
+                            </div>
+                            <div class="step" onclick="openOverlay('image-overlay')">
+                                <div class="step-circle">🎨</div>
+                                <div class="step-label">이미지</div>
+                            </div>
+                            <div class="step" onclick="openOverlay('publish-overlay')">
+                                <div class="step-circle">🚀</div>
+                                <div class="step-label">발행</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: auto; font-size: 12px; color: var(--text-sub); display: flex; justify-content: space-between;">
+                        <span>Current Agent: <strong style="color:var(--accent-blue);">FactChecker_Bot</strong></span>
+                        <span>Est. Completion: 5 mins</span>
+                    </div>
+                </div>
+
+                <div class="card" style="grid-column: 2 / 3; grid-row: 1 / 3;">
+                    <div class="card-header">
+                        <span class="card-title">📱 AEO 예측 프리뷰</span>
+                    </div>
+
+                    <div class="preview-box">
+                        <div class="preview-img">
+                            <span style="font-size:12px; color:#666;">[Waiting for Image...]</span>
+                            <div class="watermark">체험콕</div>
+                        </div>
+                    </div>
+
+                    <div class="aeo-card">
+                        <div class="aeo-label">🤖 AEO(AI 인용) 확률 예측</div>
+                        <div style="display:flex; align-items:end; gap:10px;">
+                            <div class="aeo-score">85<span style="font-size:14px;">점</span></div>
+                            <div style="font-size:12px; color:var(--text-main); padding-bottom:5px;">매우 높음</div>
+                        </div>
+                        <div
+                            style="width:100%; height:4px; background:rgba(41,121,255,0.2); margin-top:5px; border-radius:2px;">
+                            <div style="width:85%; height:100%; background:var(--accent-blue); border-radius:2px;">
+                            </div>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-sub); margin-top:8px;">
+                            * 구조화된 데이터(JSON-LD)가 적용되어, 챗GPT나 Gemini가 인용하기 유리합니다.
+                        </div>
+                    </div>
+
+                    <button class="btn-action">📱 모바일 검수 전송</button>
+                </div>
+
+                <div class="card" style="grid-column: 1 / 2;" onclick="openOverlay('keyword-overlay')">
+                    <div class="card-header"><span class="card-title">📊 키워드 인텔리전스</span><span class="card-more">상세
+                            ></span></div>
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1; border-right: 1px solid var(--border-thin);">
+                            <div style="font-size: 12px; color: var(--text-sub);">월간 검색량</div>
+                            <div style="font-size: 24px; font-weight: 900;">1.2M <span
+                                    style="font-size:12px; color:var(--status-red);">▲</span></div>
+                        </div>
+                        <div style="flex: 1; padding-left: 20px;">
+                            <div style="font-size: 12px; color: var(--text-sub);">AI 답변 점유율</div>
+                            <div style="font-size: 24px; font-weight: 900; color:var(--accent-blue);">45%</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="log-drawer" onclick="openOverlay('log-overlay')">
+            <div
+                style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; font-weight: bold; color: #fff;">
+                🤖 AGENT WORK LOGS (Live)
+            </div>
+
+            <div class="agent-msg">
+                <div class="agent-icon">🕵️</div>
+                <div>
+                    <span class="agent-name">Research_Agent</span>
+                    <span class="agent-text">"아이브 신곡 '해야'와 관련된 최신 뉴스 4건과 인스타 트렌드를 수집했습니다."</span>
+                </div>
+                <span class="agent-time">14:30:10</span>
+            </div>
+
+            <div class="agent-msg">
+                <div class="agent-icon">✍️</div>
+                <div>
+                    <span class="agent-name">Writer_Agent</span>
+                    <span class="agent-text">"수집된 정보를 바탕으로 '체험콕' 페르소나를 입혀 초안 작성을 완료했습니다. (감성 비율 40% 적용)"</span>
+                </div>
+                <span class="agent-time">14:30:45</span>
+            </div>
+
+            <div class="agent-msg">
+                <div class="agent-icon">🛡️</div>
+                <div>
+                    <span class="agent-name">FactCheck_Bot</span>
+                    <span class="agent-text">"잠시만요, 본문에 언급된 '음원차트 1위' 사실 여부를 교차 검증 중입니다..."</span>
+                </div>
+                <span class="agent-time">14:31:00</span>
+            </div>
+        </footer>
+
+        <div id="fact-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">🛡️ 팩트 체크 & 내부 링크</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content">
+                <h4 style="margin-bottom:10px;">팩트 검증 리포트 (Hallucination Check)</h4>
+                <div
+                    style="padding:15px; border:1px solid var(--status-green); background:rgba(0,200,83,0.05); border-radius:6px; margin-bottom:20px;">
+                    <div style="font-weight:bold; color:var(--status-green); margin-bottom:5px;">✅ 검증 완료 (Verified)
+                    </div>
+                    <div style="font-size:12px; color:var(--text-sub);">
+                        - "멜론 차트 1위" (교차 검증됨: 네이버 뉴스)<br>
+                        - "안유진 의상 브랜드: 펜디" (교차 검증됨: 공식 인스타)
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom:10px;">내부 링크 자동 연결 (Internal Linking)</h4>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:10px;">블로그 체류시간 증대를 위해 관련 이전 글을 자동으로
+                    연결합니다.</p>
+
+                <table class="detail-table">
+                    <tr>
+                        <th>키워드</th>
+                        <th>연결될 이전 글</th>
+                        <th>상태</th>
+                    </tr>
+                    <tr>
+                        <td>아이브</td>
+                        <td>[작년 글] 아이브 콘서트 직관 후기</td>
+                        <td style="color:var(--status-green);">Linked</td>
+                    </tr>
+                    <tr>
+                        <td>안유진</td>
+                        <td>[정보] 안유진 예능 패션 모음</td>
+                        <td style="color:var(--status-green);">Linked</td>
+                    </tr>
+                </table>
+                <button class="btn-sub" style="width:100%;">🔗 링크 연결 적용하기</button>
+            </div>
+        </div>
+
+        <div id="keyword-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">🔍 키워드 & AEO 전략</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content">
+                <div class="form-group">
+                    <label class="form-label">메인 키워드</label>
+                    <input type="text" class="form-input" value="아이브 신곡 뮤비 해석">
+                </div>
+
+                <h4 style="margin: 20px 0 10px;">AEO 최적화 질문 (FAQ Schema)</h4>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:10px;">AI 답변에 인용되기 위해 아래 질문에 대한 답변을 본문에
+                    포함합니다.</p>
+                <div
+                    style="padding:10px; background:rgba(41,121,255,0.05); border:1px solid var(--accent-blue); border-radius:6px;">
+                    <div style="font-size:12px; font-weight:bold;">Q. 아이브 신곡 '해야'의 뜻은 무엇인가요?</div>
+                    <div style="font-size:12px; margin-top:5px;">A. (자동생성) 태양을 사랑하는 호랑이 설화를 모티브로...</div>
+                </div>
+                <button class="btn-sub" style="width:100%; margin-top:10px;">+ FAQ 스키마 추가</button>
+            </div>
+        </div>
+
+        <div id="draft-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">📝 AI 원고 에디터</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <span style="font-size:12px; font-weight:bold;">Writer Agent</span>
+                    <span style="font-size:12px; color:var(--accent-purple);">Status: Editing...</span>
+                </div>
+                <textarea class="form-textarea" style="height:300px;">
+안녕하세요! 체험콕입니다. 💛
+드디어 기다리고 기다리던 아이브의 신곡이 나왔어요!
+
+(내부 링크: 작년 콘서트 후기 보러가기)
+
+이번 뮤비 해석의 핵심은 바로 '호랑이'인데요...
+                </textarea>
+                <button class="btn-action">수정 완료 및 다음 단계</button>
+            </div>
+        </div>
+
+        <div id="image-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">🎨 이미지 스튜디오</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content">
+                <div style="text-align:center; padding:50px;">이미지 생성 대기 중...</div>
+            </div>
+        </div>
+        <div id="publish-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">🚀 발행 설정</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content"><button class="btn-action">발행 시작</button></div>
+        </div>
+        <div id="rag-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">📚 RAG 데이터</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content">
+                <div style="padding:20px;">수집된 데이터 소스 목록...</div>
+            </div>
+        </div>
+        <div id="log-overlay" class="overlay">
+            <div class="ov-header">
+                <div class="ov-title">🤖 전체 에이전트 로그</div>
+                <div class="ov-close" onclick="closeOverlays()">×</div>
+            </div>
+            <div class="ov-content" style="background:#1a1a1a; color:#ccc; font-family:monospace; font-size:12px;">
+                <div>[14:30:10] Research_Agent: Found 4 sources.</div>
+                <div>[14:30:45] Writer_Agent: Draft v1 created.</div>
+                <div>[14:31:00] FactCheck_Bot: Verifying claims...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+        function openOverlay(id) {
+            closeOverlays();
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+        }
+        function closeOverlays() {
+            document.querySelectorAll('.overlay').forEach(ov => ov.classList.remove('active'));
+        }
+    </script>
+</body>
+
+</html>
