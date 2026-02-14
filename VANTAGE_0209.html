@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE AI - Profit Driven Master</title>
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES (NEO-BRUTALISM & PROFIT IDENTITY)
+           ========================================================================== */
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --footer-height: 48px;
+
+            --bg-body: #f4f4f4;
+            --bg-white: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-terminal: #000000;
+
+            --text-main: #111111;
+            --text-sub: #555555;
+            --text-terminal: #00ff00;
+
+            --border-thick: 2px solid #000000;
+            --border-thin: 1px solid #d0d0d0;
+
+            --accent-yellow: #FFD700;
+            /* Attention */
+            --accent-blue: #0055ff;
+            /* Action */
+            --accent-purple: #9C27B0;
+            /* Intelligence */
+            --accent-red: #ff3300;
+            /* Alert */
+
+            --brand-naver: #03C75A;
+            --brand-tistory: #FF5722;
+            --brand-wp: #21759B;
+
+            --status-done: #00C853;
+            --status-wait: #BDBDBD;
+
+            --shadow-card: 6px 6px 0px rgba(0, 0, 0, 0.1);
+            --trans-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-white: #1e1e1e;
+            --bg-sidebar: #181818;
+            --text-main: #eeeeee;
+            --text-sub: #aaaaaa;
+            --border-thick: 2px solid #444;
+            --border-thin: 1px solid #333;
+            --shadow-card: 6px 6px 0px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .nav-item.active {
+            background: var(--accent-yellow);
+            border: var(--border-thick);
+            box-shadow: 4px 4px 0px #000;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: var(--bg-white);
+            border-bottom: var(--border-thick);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        /* --- WORKSPACE GRID --- */
+        .workspace-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            /* Wide cards for detailed view */
+            gap: 24px;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-bottom: 60px;
+        }
+
+        /* --- CARD DESIGN --- */
+        .card {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            padding: 0;
+            /* Header separated */
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translate(-2px, -2px);
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #fff;
+        }
+
+        .tag-badge {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 1px solid #000;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .tag-ent {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .tag-eco {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        /* --- INTELLIGENCE SNAPSHOT (PROFIT INDICATOR) --- */
+        .card-body {
+            padding: 20px;
+            background: var(--bg-body);
+        }
+
+        .traffic-indicator {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .traffic-metric {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #eee;
+        }
+
+        .traffic-metric:last-child {
+            border-right: none;
+        }
+
+        .tm-label {
+            font-size: 10px;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .tm-value {
+            font-size: 14px;
+            font-weight: 900;
+            color: #000;
+        }
+
+        .tm-trend {
+            font-size: 10px;
+            color: var(--accent-red);
+            font-weight: 800;
+        }
+
+        /* --- PRISM TRACKS (STEPPER UI) --- */
+        .track-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .platform-track {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 12px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Platform Brand Stripe */
+        .platform-track.naver {
+            border-left: 5px solid var(--brand-naver);
+        }
+
+        .platform-track.tistory {
+            border-left: 5px solid var(--brand-tistory);
+        }
+
+        .platform-track.wp {
+            border-left: 5px solid var(--brand-wp);
+        }
+
+        .track-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .persona-badge {
+            font-size: 11px;
+            font-weight: 800;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* The Title Display (Direct Visibility) */
+        .generated-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-left: 2px solid #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .generated-title:hover {
+            background: #e0e0e0;
+            color: var(--accent-blue);
+        }
+
+        /* Stepper Controls (Interactive Dots) */
+        .stepper {
+            display: flex;
+            gap: 2px;
+            background: #eee;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .step-btn {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 10px;
+            font-weight: 800;
+            color: #999;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: 0.2s;
+        }
+
+        .step-btn:hover {
+            background: #ddd;
+            color: #000;
+        }
+
+        /* Step Status */
+        .step-btn.done {
+            background: var(--status-done);
+            color: #fff;
+        }
+
+        .step-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+
+        .step-btn.error {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        /* --- FOOTER & MODALS --- */
+        .debug-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            border-top: var(--border-thick);
+            z-index: 300;
+        }
+
+        /* Detail Modal (The "Click to View" Layer) */
+        .detail-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 500px;
+            background: #fff;
+            border: 2px solid #000;
+            box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.2s;
+        }
+
+        .detail-modal.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            background: #000;
+            color: #fff;
+            padding: 10px 15px;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-row {
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+
+        .lbl {
+            font-size: 11px;
+            font-weight: 700;
+            color: #666;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .val {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .btn-mini {
+            font-size: 10px;
+            padding: 2px 6px;
+            border: 1px solid #999;
+            background: #fff;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo">VANTAGE <span>AI</span></div>
+            <div class="nav-item">01. DASHBOARD</div>
+            <div class="nav-item active">02. WORKSPACE</div>
+            <div class="nav-item">03. STUDIO</div>
+            <div class="nav-item">04. INTELLIGENCE</div>
+            <div class="nav-item">05. SETTINGS</div>
+        </div>
+        <div style="padding-top:20px; border-top:var(--border-thin)">
+            <div style="font-weight:900;">체험콕 (Master)</div>
+            <div style="font-size:11px; color:var(--text-sub);">PROFIT ENGINE ON</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h2 style="font-weight:900;">PROFIT WORKSPACE</h2>
+            <div style="font-size:12px; font-weight:700;">Running: 2 Campaigns</div>
+        </header>
+
+        <div class="workspace-grid">
+
+            <!-- [CARD 1] ENTERTAINMENT (The Profit Model) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-ent">ENTERTAINMENT</span>
+                        <h3 style="font-size:18px; font-weight:900;">아이브(IVE) 챌린지 캠페인</h3>
+                    </div>
+                    <button class="btn-mini" onclick="openModal('log-modal')">LOG</button>
+                </div>
+
+                <div class="card-body">
+                    <!-- Traffic Prediction (Money Flow) -->
+                    <div class="traffic-indicator">
+                        <div class="traffic-metric">
+                            <div class="tm-label">Target Keyword</div>
+                            <div class="tm-value">#아이브_아센디오</div>
+                        </div>
+                        <div class="traffic-metric">
+                            <div class="tm-label">Search Vol.</div>
+                            <div class="tm-value">45,000+</div>
+                            <div class="tm-trend">▲ 120% (Shorts)</div>
+                        </div>
+                        <div class="traffic-metric">
+                            <div class="tm-label">Exp. Click</div>
+                            <div class="tm-value">3,200</div>
+                        </div>
+                    </div>
+
+                    <!-- PRISM TRACKS -->
+                    <div class="track-container">
+
+                        <!-- 1. NAVER (Experience/Review) -->
+                        <div class="platform-track naver">
+                            <div class="track-header">
+                                <span style="font-weight:900; color:var(--brand-naver);">NAVER (체험콕)</span>
+                                <span class="persona-badge">리뷰형 페르소나</span>
+                            </div>
+                            <!-- Title Preview (Clickable for Edit) -->
+                            <div class="generated-title" onclick="openModal('title-modal-naver')">
+                                "아이브 아센디오 챌린지, 몸치인 저도 성공한 거울모드 꿀팁!"
+                            </div>
+                            <!-- Interactive Stepper -->
+                            <div class="stepper">
+                                <div class="step-btn done" onclick="openModal('kwd-modal')">KEYWORD</div>
+                                <div class="step-btn done" onclick="openModal('title-modal-naver')">TITLE</div>
+                                <div class="step-btn active" onclick="openModal('content-modal')">WRITING (60%)</div>
+                                <div class="step-btn">UPLOAD</div>
+                            </div>
+                        </div>
+
+                        <!-- 2. TISTORY (Info/Analysis) -->
+                        <div class="platform-track tistory">
+                            <div class="track-header">
+                                <span style="font-weight:900; color:var(--brand-tistory);">TISTORY (연예편집장)</span>
+                                <span class="persona-badge">분석형 페르소나</span>
+                            </div>
+                            <div class="generated-title" onclick="openModal('title-modal-tistory')">
+                                [분석] 아이브 신곡 안무 난이도 분석 및 챌린지 포인트 정리
+                            </div>
+                            <div class="stepper">
+                                <div class="step-btn done">KEYWORD</div>
+                                <div class="step-btn done">TITLE</div>
+                                <div class="step-btn">WRITING</div>
+                                <div class="step-btn">UPLOAD</div>
+                            </div>
+                        </div>
+
+                        <!-- 3. WORDPRESS (Global/Theory) -->
+                        <div class="platform-track wp">
+                            <div class="track-header">
+                                <span style="font-weight:900; color:var(--brand-wp);">WORDPRESS (연예블)</span>
+                                <span class="persona-badge">에세이형 페르소나</span>
+                            </div>
+                            <div class="generated-title" onclick="openModal('title-modal-wp')">
+                                K-Pop Dance Trends 2026: Why IVE is leading the Short-form Era
+                            </div>
+                            <div class="stepper">
+                                <div class="step-btn done">KEYWORD</div>
+                                <div class="step-btn done">TITLE</div>
+                                <div class="step-btn">WRITING</div>
+                                <div class="step-btn">UPLOAD</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- [CARD 2] ECONOMY (Example) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-eco">ECONOMY</span>
+                        <h3 style="font-size:18px; font-weight:900;">2026 주담대 금리 분석</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="traffic-indicator">
+                        <div class="traffic-metric">
+                            <div class="tm-label">Target Keyword</div>
+                            <div class="tm-value">#주담대_금리</div>
+                        </div>
+                        <div class="traffic-metric">
+                            <div class="tm-label">Search Vol.</div>
+                            <div class="tm-value">120,000</div>
+                            <div class="tm-trend">▲ Stable</div>
+                        </div>
+                    </div>
+
+                    <div class="track-container">
+                        <!-- Simplified view for finished tasks -->
+                        <div class="platform-track naver">
+                            <div class="track-header">
+                                <span style="font-weight:900; color:var(--brand-naver);">NAVER (돈의결)</span>
+                                <span style="color:var(--status-done); font-weight:800; font-size:11px;">UPLOAD
+                                    COMPLETE</span>
+                            </div>
+                            <div class="generated-title">내 집 마련, 2026년 금리 인하가 마지막 기회? (상담 후기)</div>
+                            <div class="stepper">
+                                <div class="step-btn done">KEYWORD</div>
+                                <div class="step-btn done">TITLE</div>
+                                <div class="step-btn done">WRITING</div>
+                                <div class="step-btn done">UPLOAD</div>
+                            </div>
+                        </div>
+
+                        <div class="platform-track tistory">
+                            <div class="track-header">
+                                <span style="font-weight:900; color:var(--brand-tistory);">TISTORY (머니파이)</span>
+                                <span style="color:var(--status-done); font-weight:800; font-size:11px;">UPLOAD
+                                    COMPLETE</span>
+                            </div>
+                            <div class="generated-title">2026년 한국은행 기준금리 전망 및 대출 전략 보고서</div>
+                            <div class="stepper">
+                                <div class="step-btn done">KEYWORD</div>
+                                <div class="step-btn done">TITLE</div>
+                                <div class="step-btn done">WRITING</div>
+                                <div class="step-btn done">UPLOAD</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="debug-footer">
+            <span style="color: var(--accent-red); font-weight: 900; margin-right: 15px;">● SYSTEM LIVE</span>
+            <span id="typing-log">> [18:20:05] Naver Agent: Generating body content (Image count: 5)...</span>
+        </footer>
+
+        <!-- --- DETAIL MODALS (Interactions) --- -->
+
+        <!-- 1. KEYWORD DETAIL -->
+        <div id="kwd-modal" class="detail-modal">
+            <div class="modal-header">
+                <span>KEYWORD INTELLIGENCE</span>
+                <span style="cursor:pointer;" onclick="closeModals()">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <span class="lbl">Selected Main Keyword</span>
+                    <span class="val" style="color:blue;">#아이브_아센디오</span>
+                </div>
+                <div class="modal-row">
+                    <span class="lbl">Source Origin</span>
+                    <span class="val">🔥 YouTube Shorts Trend (Vol: High)</span>
+                </div>
+                <div class="modal-row">
+                    <span class="lbl">Related Keywords (LSI)</span>
+                    <span class="val">거울모드, 안무 배우기, 챌린지 꿀팁, 장원영 춤선</span>
+                </div>
+                <button class="btn-mini"
+                    style="width:100%; padding:8px; background:#000; color:#fff;">RE-ANALYZE</button>
+            </div>
+        </div>
+
+        <!-- 2. TITLE DETAIL (NAVER) -->
+        <div id="title-modal-naver" class="detail-modal">
+            <div class="modal-header">
+                <span>TITLE GENERATION (NAVER)</span>
+                <span style="cursor:pointer;" onclick="closeModals()">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row" style="background:#eaffea; padding:5px;">
+                    <span class="lbl">🏆 Selected Title (Hook Score: 92)</span>
+                    <span class="val">"아이브 아센디오 챌린지, 몸치인 저도 성공한 거울모드 꿀팁!"</span>
+                </div>
+                <div class="modal-row">
+                    <span class="lbl">Candidate A</span>
+                    <span class="val">아센디오 챌린지 참여 방법, 이것만 알면 끝?</span>
+                </div>
+                <div class="modal-row">
+                    <span class="lbl">Candidate B</span>
+                    <span class="val">요즘 틱톡 난리 난 아이브 신곡 춤, 직접 춰봤어요</span>
+                </div>
+                <div style="font-size:11px; color:#666; margin-top:10px;">
+                    * Strategy: Curiosity Gap + Personal Experience (Body-blind)
+                </div>
+                <button class="btn-mini" style="width:100%; margin-top:10px; padding:8px;">EDIT SELECTED TITLE</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function openModal(id) {
+            closeModals();
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModals() {
+            document.querySelectorAll('.detail-modal').forEach(el => el.classList.remove('active'));
+        }
+
+        // Auto Log Simulation
+        const logs = [
+            "> [18:20:10] Tistory Agent: H2 Tag optimization...",
+            "> [18:20:15] WP Agent: Checking Global SEO Score...",
+            "> [18:20:20] System: Tracking Keyword Position..."
+        ];
+        let i = 0;
+        setInterval(() => {
+            document.getElementById('typing-log').innerText = logs[i];
+            i = (i + 1) % logs.length;
+        }, 3000);
+    </script>
+</body>
+
+</html>
