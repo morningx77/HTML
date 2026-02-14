@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE AI - Profit Driven Master (Enhanced UI)</title>
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES (RESTRAINED NEO-BRUTALISM)
+           ========================================================================== */
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --footer-height: 48px;
+
+            /* Backgrounds: Clean & Neutral */
+            --bg-body: #f0f0f0;
+            --bg-white: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-terminal: #000000;
+
+            /* Text: Sharp Contrast */
+            --text-main: #111111;
+            --text-sub: #555555;
+            --text-light: #888888;
+            --text-terminal: #00ff00;
+
+            /* Borders: The Identity */
+            --border-thick: 2px solid #111;
+            --border-thin: 1px solid #ddd;
+
+            /* Accents: Controlled Usage */
+            --accent-yellow: #FFD700;
+            --accent-blue: #2962FF;
+            --accent-green: #00C853;
+            --accent-red: #D50000;
+
+            /* Brand Colors (Muted for Icons) */
+            --brand-naver: #03C75A;
+            --brand-tistory: #FF5722;
+            --brand-wp: #21759B;
+
+            /* Visuals */
+            --shadow-card: 4px 4px 0px #111;
+            /* Hard Shadow */
+            --shadow-hover: 6px 6px 0px #111;
+            --radius-box: 2px;
+            /* Sharp corners */
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1a1a;
+            --bg-white: #222;
+            --bg-sidebar: #1f1f1f;
+            --text-main: #eee;
+            --border-thick: 2px solid #555;
+            --shadow-card: 4px 4px 0px #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: var(--radius-box);
+            transition: 0.1s;
+            color: var(--text-sub);
+        }
+
+        .nav-item.active {
+            background: #111;
+            color: #fff;
+            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: #eee;
+            color: #000;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: var(--bg-white);
+            border-bottom: var(--border-thick);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .workspace-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-bottom: 80px;
+        }
+
+        /* --- CARD DESIGN (ENHANCED) --- */
+        .card {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            border-radius: var(--radius-box);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #fff;
+        }
+
+        /* Category Tags: Cleaner Look */
+        .tag-badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border: 1px solid #111;
+            margin-bottom: 8px;
+            display: inline-block;
+            background: #fff;
+            color: #111;
+        }
+
+        .tag-ent {
+            border-bottom: 3px solid var(--accent-blue);
+        }
+
+        .tag-eco {
+            border-bottom: 3px solid var(--accent-yellow);
+        }
+
+        .tag-health {
+            border-bottom: 3px solid var(--accent-green);
+        }
+
+        .card-body {
+            padding: 20px;
+            background: var(--bg-white);
+        }
+
+        /* --- PLANNING DASHBOARD (NEW MEANINGFUL ELEMENTS) --- */
+        .plan-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Module 1: Trigger / Insight */
+        .insight-box {
+            border: 1px solid #ddd;
+            padding: 12px;
+            background: #fcfcfc;
+            border-radius: var(--radius-box);
+        }
+
+        .ib-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ib-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .ib-accent {
+            color: var(--accent-red);
+            font-weight: 800;
+        }
+
+        /* Module 2: Credibility / Safety (YMYL) */
+        .ymyl-box {
+            border: 1px solid #ddd;
+            padding: 12px;
+            background: #fcfcfc;
+            border-radius: var(--radius-box);
+        }
+
+        .ymyl-status {
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .check-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: #eee;
+            color: #555;
+            border-radius: 2px;
+        }
+
+        .check-badge.pass {
+            background: #E8F5E9;
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        /* --- PRISM TRACKS (REFINED) --- */
+        .track-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .platform-track {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            border-radius: var(--radius-box);
+            position: relative;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .platform-track:hover {
+            border-color: #111;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Platform Header */
+        .track-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 900;
+            color: #fff;
+            border-radius: 2px;
+            margin-right: 6px;
+        }
+
+        .bg-n {
+            background: var(--brand-naver);
+        }
+
+        .bg-t {
+            background: var(--brand-tistory);
+        }
+
+        .bg-w {
+            background: var(--brand-wp);
+        }
+
+        .p-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        .p-role {
+            font-size: 10px;
+            color: #666;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+
+        /* Title Area */
+        .title-box {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            padding: 8px;
+            background: #f9f9f9;
+            border-left: 2px solid #ccc;
+            cursor: pointer;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .title-box:hover {
+            background: #eee;
+            border-left-color: var(--accent-blue);
+        }
+
+        /* Status Steps (Minimal) */
+        .step-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            flex: 1;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .dot.done {
+            background: var(--text-main);
+        }
+
+        .dot.active {
+            background: var(--accent-blue);
+        }
+
+        .dot.safe {
+            background: var(--accent-green);
+        }
+
+        /* Health Specific */
+
+        /* --- FOOTER & BUTTONS --- */
+        .btn-simple {
+            background: transparent;
+            border: 1px solid #ccc;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .btn-simple:hover {
+            border-color: #111;
+            color: #111;
+        }
+
+        .debug-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            border-top: var(--border-thick);
+            z-index: 300;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo">VANTAGE <span>AI</span></div>
+            <div class="nav-item">01. DASHBOARD</div>
+            <div class="nav-item active">02. WORKSPACE</div>
+            <div class="nav-item">03. STUDIO</div>
+            <div class="nav-item">04. INTELLIGENCE</div>
+            <div class="nav-item">05. SETTINGS</div>
+        </div>
+        <div style="padding-top:20px; border-top:var(--border-thin)">
+            <div style="font-weight:900; font-size:14px;">체험콕 Master</div>
+            <div style="font-size:11px; color:var(--text-sub); margin-top:5px;">PROFIT ENGINE v2.2</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h2 style="font-weight:900; letter-spacing:-0.5px;">PROFIT WORKSPACE</h2>
+            <div style="font-size:12px; font-weight:700; color:#555;">Targeting: 3 Segments</div>
+        </header>
+
+        <div class="workspace-grid">
+
+            <!-- [CARD 1] ENTERTAINMENT (Default) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-ent">ENTERTAINMENT</span>
+                        <h3 style="font-size:18px; font-weight:900;">아이브(IVE) 챌린지 캠페인</h3>
+                    </div>
+                    <button class="btn-simple">LOG</button>
+                </div>
+                <div class="card-body">
+                    <div class="plan-dashboard">
+                        <div class="insight-box">
+                            <div class="ib-label">🔥 TRIGGER SOURCE</div>
+                            <div class="ib-value">YouTube Shorts<br><span style="font-size:11px; color:#666;">Vol: 45K
+                                    (High)</span></div>
+                        </div>
+                        <div class="insight-box">
+                            <div class="ib-label">🎯 STRATEGY</div>
+                            <div class="ib-value">Hook: "Body-blind"<br>Format: <span
+                                    style="font-weight:400">Review</span></div>
+                        </div>
+                    </div>
+                    <div class="track-container">
+                        <div class="platform-track">
+                            <div class="track-meta">
+                                <div><span class="brand-icon bg-n">N</span><span class="p-name">체험콕</span> <span
+                                        class="p-role">리뷰형</span></div>
+                                <div class="step-dots" style="width:40px;">
+                                    <div class="dot done"></div>
+                                    <div class="dot active"></div>
+                                    <div class="dot"></div>
+                                </div>
+                            </div>
+                            <div class="title-box">"아이브 아센디오 챌린지, 몸치인 저도 성공한 거울모드 꿀팁!"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [CARD 2] ECONOMY (Default) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-eco">ECONOMY</span>
+                        <h3 style="font-size:18px; font-weight:900;">2026 주담대 금리 분석</h3>
+                    </div>
+                    <button class="btn-simple">LOG</button>
+                </div>
+                <div class="card-body">
+                    <div class="plan-dashboard">
+                        <div class="insight-box">
+                            <div class="ib-label">📊 MARKET DATA</div>
+                            <div class="ib-value">BOK Base Rate<br><span style="font-size:11px; color:#666;">Stable
+                                    (2.5%)</span></div>
+                        </div>
+                        <div class="insight-box">
+                            <div class="ib-label">🎯 STRATEGY</div>
+                            <div class="ib-value">Target: <span style="font-weight:400">Newlyweds</span><br>Depth: <span
+                                    style="font-weight:400">Analysis</span></div>
+                        </div>
+                    </div>
+                    <div class="track-container">
+                        <div class="platform-track">
+                            <div class="track-meta">
+                                <div><span class="brand-icon bg-n">N</span><span class="p-name">돈의결</span> <span
+                                        class="p-role">경험형</span></div>
+                                <div class="step-dots" style="width:40px;">
+                                    <div class="dot done"></div>
+                                    <div class="dot done"></div>
+                                    <div class="dot done"></div>
+                                </div>
+                            </div>
+                            <div class="title-box">내 집 마련, 2026년 금리 인하가 마지막 기회? (상담 후기)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [CARD 3] HEALTH (ENHANCED & ADDED) -->
+            <div class="card">
+                <div class="card-header">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <span class="tag-badge tag-health">HEALTH & WELLNESS</span>
+                        <h3 style="font-size:18px; font-weight:900;">봄철 미세먼지 디톡스</h3>
+                    </div>
+                    <div style="text-align:right;">
+                        <button class="btn-simple"
+                            style="border-color:var(--accent-green); color:var(--accent-green);">LIVE</button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- 1. Planning Dashboard: Meaningful Elements -->
+                    <div class="plan-dashboard">
+
+                        <!-- Element 1: Real-time Context Trigger -->
+                        <div class="insight-box" style="border-left: 3px solid var(--accent-red);">
+                            <div class="ib-label">⚠️ CONTEXT TRIGGER</div>
+                            <div class="ib-value">
+                                Air Quality Index (AQI)<br>
+                                <span class="ib-accent">158 (Unhealthy)</span>
+                            </div>
+                            <div style="font-size:10px; color:#666; margin-top:4px;">* Detected 10 mins ago</div>
+                        </div>
+
+                        <!-- Element 2: YMYL Safety/Credibility -->
+                        <div class="ymyl-box">
+                            <div class="ib-label">🛡️ SAFETY CHECK (YMYL)</div>
+                            <div class="ymyl-status">
+                                <span class="check-badge pass">Facts Verified</span>
+                                <span class="check-badge pass">No Medical Claims</span>
+                            </div>
+                            <div style="font-size:10px; color:#666; margin-top:4px;">Source: PubMed, WHO API</div>
+                        </div>
+                    </div>
+
+                    <!-- Element 3: Strategy & Target -->
+                    <div style="margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:var(--radius-box);">
+                        <div style="font-size:11px; font-weight:700; color:#333; margin-bottom:5px;">🎯 TARGET STRATEGY
+                        </div>
+                        <div style="display:flex; gap:10px; font-size:12px;">
+                            <span style="background:#fff; border:1px solid #ddd; padding:2px 6px;">Target: 3040
+                                Moms</span>
+                            <span style="background:#fff; border:1px solid #ddd; padding:2px 6px;">Pain: Cough,
+                                Skin</span>
+                            <span style="background:#fff; border:1px solid #ddd; padding:2px 6px;">Sol: Food (Not
+                                Meds)</span>
+                        </div>
+                    </div>
+
+                    <!-- Prism Tracks: Platform Specifics -->
+                    <div class="track-container">
+                        <!-- 1. NAVER (Review) -->
+                        <div class="platform-track">
+                            <div class="track-meta">
+                                <div><span class="brand-icon bg-n">N</span><span class="p-name">건강지킴이</span> <span
+                                        class="p-role">체험/후기형</span></div>
+                                <div class="step-dots" style="width:60px;">
+                                    <div class="dot done" title="Keywd"></div>
+                                    <div class="dot done" title="Title"></div>
+                                    <div class="dot active" title="Writing"></div>
+                                    <div class="dot" title="Safety"></div>
+                                    <div class="dot" title="Upload"></div>
+                                </div>
+                            </div>
+                            <div class="title-box" style="border-left-color:var(--brand-naver);">
+                                미세먼지 심한 날, 우리 아이 먹이는 '이것'! (기관지 보호 레시피)
+                            </div>
+                        </div>
+
+                        <!-- 2. TISTORY (Analysis) -->
+                        <div class="platform-track">
+                            <div class="track-meta">
+                                <div><span class="brand-icon bg-t">T</span><span class="p-name">메디체크</span> <span
+                                        class="p-role">성분분석형</span></div>
+                                <div class="step-dots" style="width:60px;">
+                                    <div class="dot done"></div>
+                                    <div class="dot done"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot safe"></div>
+                                    <div class="dot"></div>
+                                </div>
+                            </div>
+                            <div class="title-box" style="border-left-color:var(--brand-tistory);">
+                                [성분분석] 브로콜리와 미역, 중금속 배출 기전 및 섭취 가이드
+                            </div>
+                        </div>
+
+                        <!-- 3. WORDPRESS (Info) -->
+                        <div class="platform-track">
+                            <div class="track-meta">
+                                <div><span class="brand-icon bg-w">W</span><span class="p-name">웰니스라이프</span> <span
+                                        class="p-role">정보형</span></div>
+                                <div class="step-dots" style="width:60px;">
+                                    <div class="dot done"></div>
+                                    <div class="dot done"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot safe"></div>
+                                    <div class="dot"></div>
+                                </div>
+                            </div>
+                            <div class="title-box" style="border-left-color:var(--brand-wp);">
+                                Natural Detoxification: 5 Foods Scientifically Proven to Combat Pollution
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="debug-footer">
+            <span style="color: var(--accent-red); font-weight: 900; margin-right: 15px;">● SYSTEM LIVE</span>
+            <span id="typing-log">> [18:20:05] Health Agent: AQI Trigger Detected (Level: 158)...</span>
+        </footer>
+
+    </main>
+
+    <script>
+        const logs = [
+            "> [18:20:10] Naver Agent: Drafting 'Mom Persona' intro...",
+            "> [18:20:15] YMYL Guard: Verifying medical claims with PubMed...",
+            "> [18:20:20] Health Agent: Found 3 safe recipes...",
+            "> [18:20:25] System: Optimizing images for mobile view..."
+        ];
+        let i = 0;
+        setInterval(() => {
+            const el = document.getElementById('typing-log');
+            if (el) el.innerText = logs[i];
+            i = (i + 1) % logs.length;
+        }, 3000);
+    </script>
+</body>
+
+</html>
