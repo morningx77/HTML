@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE AI - Workspace Master (Full Integrity Version)</title>
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & THEME SYSTEM (0203 + 0204 Integration)
+           ========================================================================== */
+        :root {
+            /* Layout & Spacing */
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --footer-height: 48px;
+            /* 0203 Classic Terminal Height */
+
+            /* Colors - Structure */
+            --bg-body: #f9f9f9;
+            --bg-white: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-terminal: #000000;
+            /* 0203 Identity */
+
+            /* Colors - Text */
+            --text-main: #111111;
+            --text-sub: #666666;
+            --text-terminal: #00ff00;
+            /* Matrix Green */
+
+            /* Colors - Brand & Accents */
+            --border-thick: 2px solid #000000;
+            --border-thin: 1px solid #e0e0e0;
+            --accent-yellow: #FFD700;
+            /* Brand Highlight */
+            --accent-blue: #0055ff;
+            /* Action / Tech */
+            --accent-purple: #9C27B0;
+            /* AEO / Intelligence */
+            --accent-red: #ff3300;
+            /* Alert / Live */
+
+            /* Status Indicators */
+            --status-green: #00C853;
+            --status-orange: #FFAB00;
+            --status-gray: #BDBDBD;
+
+            /* Effects */
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 12px 12px 0px rgba(0, 0, 0, 0.08);
+            --trans-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Dark Mode Overrides (0204 Feature) */
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-white: #1e1e1e;
+            --bg-sidebar: #181818;
+            --text-main: #eeeeee;
+            --text-sub: #aaaaaa;
+            --border-thick: 2px solid #333333;
+            --border-thin: 1px solid #333333;
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESET & BASE STYLES
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            /* Prevent body scroll, handle inside containers */
+            transition: background-color var(--trans-fast), color var(--trans-fast);
+        }
+
+        ul,
+        li {
+            list-style: none;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* ==========================================================================
+           3. SIDEBAR (0203 CLASSIC STYLE)
+           ========================================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            justify-content: space-between;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            user-select: none;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-item {
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: var(--trans-fast);
+            border-radius: 4px;
+        }
+
+        /* Active State: The "Vantage" Yellow Highlight */
+        .nav-item.active {
+            background: var(--accent-yellow);
+            border: var(--border-thick);
+            box-shadow: 4px 4px 0px #000;
+            /* 0203 Signature */
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            padding-left: 20px;
+            /* Slight slide effect */
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTENT AREA
+           ========================================================================== */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: var(--bg-white);
+            border-bottom: var(--border-thick);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .workspace-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            /* Responsive Grid */
+            gap: 24px;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-bottom: 50px;
+        }
+
+        /* ==========================================================================
+           5. INTELLIGENT CARD COMPONENT (0203 UI + 0204 Logic)
+           ========================================================================== */
+        .card {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: transform var(--trans-fast), box-shadow var(--trans-fast);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .tag-badge {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border: 1px solid #000;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .tag-ent {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .tag-eco {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        .tag-health {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* Agent Workflow Bar (The Interactive "Brain" of the Card) */
+        .agent-workflow {
+            margin-top: auto;
+            /* Push to bottom of content area */
+            padding-top: 20px;
+        }
+
+        .workflow-track {
+            display: flex;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .agent-node {
+            flex: 1;
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .agent-node:hover {
+            background: #e0e0e0;
+        }
+
+        .agent-node.active {
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .node-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            margin: 0 auto 5px;
+            border: 1px solid #999;
+        }
+
+        /* Pulsing Animation for Active Agents */
+        .agent-node.running .node-dot {
+            background: var(--status-green);
+            border-color: var(--status-green);
+            box-shadow: 0 0 5px var(--status-green);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .agent-node.error .node-dot {
+            background: var(--accent-red);
+            animation: pulse-red 1s infinite;
+        }
+
+        .node-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-sub);
+        }
+
+        @keyframes pulse-green {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ==========================================================================
+           6. DETAILED LAYERS / OVERLAYS (Where the 0204 Detail Lives)
+           ========================================================================== */
+        .side-layer {
+            position: fixed;
+            top: 0;
+            right: -700px;
+            /* Hidden by default */
+            width: 650px;
+            /* Wide enough for complex tables/graphs */
+            height: 100vh;
+            background: var(--bg-white);
+            border-left: var(--border-thick);
+            z-index: 500;
+            transition: right var(--trans-smooth);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .side-layer.open {
+            right: 0;
+        }
+
+        .layer-header {
+            padding: 25px;
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-white);
+        }
+
+        .layer-title {
+            font-size: 20px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .layer-close {
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .layer-close:hover {
+            transform: rotate(90deg);
+            color: var(--accent-red);
+        }
+
+        .layer-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: var(--bg-body);
+        }
+
+        /* Detail Module Styles (Research, Writer, etc.) */
+        .section-box {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        /* AEO Specific: Score Bars */
+        .score-bar-bg {
+            width: 100px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: var(--accent-purple);
+        }
+
+        /* OSMU Toggle Switches */
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid #999;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 1px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.2s;
+            border: 1px solid #777;
+        }
+
+        .toggle-switch.checked {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-switch.checked::after {
+            left: 20px;
+            border-color: var(--accent-blue);
+        }
+
+        /* ==========================================================================
+           7. TERMINAL FOOTER (0203 CLASSIC PRESERVED)
+           ========================================================================== */
+        .debug-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            /* Authentic Terminal Font */
+            font-size: 13px;
+            cursor: pointer;
+            border-top: var(--border-thick);
+            z-index: 300;
+            transition: height 0.3s;
+        }
+
+        .debug-footer:hover {
+            height: 52px;
+        }
+
+        /* Slight peek effect */
+
+        .blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Buttons */
+        .btn-black {
+            background: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-black:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #000;
+            padding: 8px 16px;
+            border: 2px solid #000;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo">VANTAGE <span>AI</span></div>
+            <ul class="nav-menu">
+                <li class="nav-item">01. DASHBOARD</li>
+                <li class="nav-item active">02. WORKSPACE</li>
+                <li class="nav-item">03. STUDIO</li>
+                <li class="nav-item">04. INTELLIGENCE</li>
+                <li class="nav-item">05. SETTINGS</li>
+            </ul>
+        </div>
+
+        <div style="padding-top:20px; border-top:var(--border-thin)">
+            <div style="font-weight:900; font-size: 16px; margin-bottom: 4px;">체험콕 (Master)</div>
+            <div style="font-size:11px; color:var(--text-sub);">
+                <span style="color:var(--status-green)">●</span> VANTAGE PRO LICENSE
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 style="font-weight:900; letter-spacing: -0.5px; font-size: 20px;">WORKSPACE MASTER</h2>
+                <div
+                    style="font-size: 12px; padding: 4px 10px; background: #e0e0e0; border-radius: 12px; font-weight: 700;">
+                    Running: 3 Projects
+                </div>
+            </div>
+            <div style="display:flex; gap:12px">
+                <button class="btn-outline" onclick="toggleTheme()">🌓 THEME</button>
+                <button class="btn-black" onclick="alert('새 프로젝트 마법사를 실행합니다.')">+ NEW PROJECT</button>
+            </div>
+        </header>
+
+        <div class="workspace-grid">
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-ent">ENTERTAINMENT</span>
+                        <h3 style="font-size:22px; margin-top: 5px; font-weight: 800;">아이브(IVE) 신곡 챌린지 분석</h3>
+                    </div>
+                    <button class="btn-outline" style="padding: 4px 10px; font-size: 11px;"
+                        onclick="openLayer('full-log-layer')">LOG</button>
+                </div>
+
+                <p style="font-size:14px; color:var(--text-sub); line-height: 1.6; margin-bottom: 15px;">
+                    틱톡/유튜브 쇼츠 트렌드를 실시간 RAG로 수집하여, '체험콕' 페르소나가 반영된 블로그 최적화 원고를 생성 중입니다.
+                </p>
+
+                <div class="agent-workflow">
+                    <div class="workflow-track">
+                        <div class="agent-node running" onclick="openLayer('research-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">RESEARCH</div>
+                        </div>
+                        <div class="agent-node running" onclick="openLayer('writer-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">WRITER</div>
+                        </div>
+                        <div class="agent-node" onclick="openLayer('fact-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">FACT-CHECK</div>
+                        </div>
+                        <div class="agent-node" onclick="openLayer('aeo-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">AEO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:12px; font-weight: 800; color: var(--accent-blue);">STATUS: Generating
+                        Content...</div>
+                    <button class="btn-black" style="padding: 10px 20px; font-size: 12px;">OPEN STUDIO</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-eco">ECONOMY</span>
+                        <h3 style="font-size:22px; margin-top: 5px; font-weight: 800;">2026 주택담보대출 전망</h3>
+                    </div>
+                    <button class="btn-outline" style="padding: 4px 10px; font-size: 11px;">LOG</button>
+                </div>
+                <p style="font-size:14px; color:var(--text-sub); line-height: 1.6; margin-bottom: 15px;">
+                    한국은행 보도자료 및 금융권 API 데이터를 분석하여 대출 상담사 시험 대비 및 정보형 포스팅을 준비합니다.
+                </p>
+                <div class="agent-workflow">
+                    <div class="workflow-track">
+                        <div class="agent-node active">
+                            <div class="node-dot"></div>
+                            <div class="node-label">RESEARCH</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">WRITER</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">FACT-CHECK</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">AEO</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:12px; font-weight: 800; color: var(--status-green);">STATUS: Research Complete
+                    </div>
+                    <button class="btn-outline" style="padding: 10px 20px; font-size: 12px;">VIEW DETAILS</button>
+                </div>
+            </div>
+
+        </div>
+        <footer class="debug-footer" onclick="openLayer('full-log-layer')">
+            <span style="color: var(--accent-red); font-weight: 900; margin-right: 15px;" class="blink">● SYSTEM
+                LIVE</span>
+            <span id="typing-log">> [17:01:22] Agent_Research: Web crawling (TikTok, YouTube) in progress...</span>
+            <span style="margin-left:auto; letter-spacing: 1px; color: #888;">CONSOLE.EXPAND ▲</span>
+        </footer>
+
+        <div id="research-layer" class="side-layer">
+            <div class="layer-header">
+                <div class="layer-title">🔍 RESEARCH AGENT</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content">
+                <div class="section-box">
+                    <div class="section-title">
+                        <span>LIVE DATA SOURCES (RAG)</span>
+                        <span style="color:var(--status-green)">● ACTIVE</span>
+                    </div>
+                    <div class="data-row">
+                        <span>📱 TikTok Trending API (Keyword: IVE)</span>
+                        <span style="font-size:12px; font-weight:bold; color:var(--accent-blue)">CONNECTED</span>
+                    </div>
+                    <div class="data-row">
+                        <span>📺 YouTube Shorts Analysis</span>
+                        <span style="font-size:12px; font-weight:bold; color:var(--accent-blue)">CONNECTED</span>
+                    </div>
+                    <div class="data-row">
+                        <span>📰 Naver News Search (SmartBlock)</span>
+                        <span style="font-size:12px; font-weight:bold; color:var(--accent-blue)">CONNECTED</span>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-title">AGENT THOUGHT PROCESS</div>
+                    <div
+                        style="background:#111; color:#0f0; padding:15px; font-family:'Courier New'; font-size:12px; line-height:1.5; height:200px; overflow-y:auto;">
+                        > Initializing Research Crawler...<br>
+                        > Query: "아이브 챌린지", "아센디오"<br>
+                        > Collected 24 video scripts from TikTok.<br>
+                        > Analyzing user comments for sentiment...<br>
+                        > <span style="color:yellow">INSIGHT:</span> Users are asking for "slow motion tutorial".<br>
+                        > Vector Embedding stored in Pinecone DB.<br>
+                        > Handover to Writer_Agent ready.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="writer-layer" class="side-layer">
+            <div class="layer-header" style="border-bottom: 2px solid var(--accent-yellow);">
+                <div class="layer-title">✍️ WRITER AGENT</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content">
+                <div class="section-box">
+                    <div class="section-title">PERSONA SETTING</div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size:12px; font-weight:700; display:block; margin-bottom:5px;">Tone &
+                            Manner</label>
+                        <select style="width:100%; padding:10px; border:2px solid #000; font-weight:700;">
+                            <option>체험콕 (정보 60 : 감성 40) - Default</option>
+                            <option>전문가 모드 (정보 90 : 감성 10)</option>
+                            <option>친구 같은 모드 (정보 30 : 감성 70)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-title">OSMU (One Source Multi Use)</div>
+
+                    <div class="data-row">
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-weight:700">Naver Blog</span>
+                            <span style="font-size:11px; color:#666">SEO Optimized Article</span>
+                        </div>
+                        <div class="toggle-switch checked"></div>
+                    </div>
+
+                    <div class="data-row">
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-weight:700">Instagram Feed</span>
+                            <span style="font-size:11px; color:#666">Card News Text Summary</span>
+                        </div>
+                        <div class="toggle-switch checked"></div>
+                    </div>
+
+                    <div class="data-row">
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-weight:700">YouTube Shorts</span>
+                            <span style="font-size:11px; color:#666">Narration Script</span>
+                        </div>
+                        <div class="toggle-switch"></div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-title">IMAGE GENERATION (DALL-E 3)</div>
+                    <div class="data-row">
+                        <span>Remove Text via Brush (In-painting)</span>
+                        <div class="toggle-switch checked"></div>
+                    </div>
+                    <div class="data-row">
+                        <span>Apply 'VANTAGE' Watermark</span>
+                        <div class="toggle-switch checked"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="aeo-layer" class="side-layer">
+            <div class="layer-header" style="border-bottom: 2px solid var(--accent-purple);">
+                <div class="layer-title" style="color: var(--accent-purple);">📚 AEO ANALYSIS</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content">
+                <div class="section-box" style="background: #fdfdfd;">
+                    <div class="section-title">USER SEARCH INTENT</div>
+                    <div
+                        style="padding: 15px; border-left: 4px solid var(--accent-purple); background: #f4f4f4; margin-bottom: 10px;">
+                        <h4 style="margin-bottom:5px;">"How to dance" (Instructional)</h4>
+                        <p style="font-size:13px; color:#555;">
+                            User wants specific steps, not just news. <br>
+                            <strong>Suggestion:</strong> Include a numbered list in the 2nd paragraph.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="section-title">KEYWORD DENSITY CHECK</div>
+
+                    <div style="margin-bottom: 15px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                            <span>Main: 아이브 신곡 (Target: 5-7)</span>
+                            <strong>Current: 5</strong>
+                        </div>
+                        <div class="score-bar-bg">
+                            <div class="score-bar-fill" style="width: 80%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                            <span>Sub: 챌린지 참여 (Target: 3-5)</span>
+                            <strong>Current: 2 (Low)</strong>
+                        </div>
+                        <div class="score-bar-bg">
+                            <div class="score-bar-fill" style="width: 40%; background: orange;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="full-log-layer" class="side-layer">
+            <div class="layer-header" style="background:#000; color:#0f0;">
+                <div class="layer-title">💻 SYSTEM TERMINAL</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content" style="background:#000; padding:0;">
+                <div
+                    style="color:#0f0; padding:20px; font-family:'Courier New', monospace; font-size:13px; line-height:1.6;">
+                    [17:00:01] VANTAGE CORE v2.5 Booting sequence initiated...<br>
+                    [17:00:03] <span style="color:#fff">AUTH:</span> User 'Cheomkok' verified. (Level: Master)<br>
+                    [17:00:05] <span style="color:#00ffff">CONNECT:</span> Gemini-1.5-Pro API Connected. (Ping:
+                    12ms)<br>
+                    [17:00:05] <span style="color:#00ffff">CONNECT:</span> Claude-3.5-Sonnet API Connected. (Ping:
+                    15ms)<br>
+                    ---------------------------------------------------<br>
+                    [17:05:10] PROJECT_IVE: Research_Agent task started.<br>
+                    [17:05:12] CRAWLER: Targeting tiktok.com/tag/ive_challenge<br>
+                    [17:05:45] RAG: 15 video transcripts indexed.<br>
+                    [17:08:45] <span style="color:#fff">SUCCESS:</span> Image Asset #12 generated by DALL-E 3.<br>
+                    [17:09:00] WRITER: Applying 'Cheomkok' persona (Info:60/Emo:40).<br>
+                    [17:10:20] INFO: Writer_Agent waiting for AEO score validation.<br>
+                    [17:11:05] <span style="color:orange">WARNING:</span> Minor latency in Naver Search API.
+                    Retrying...<br>
+                    [17:11:06] RETRY: Success.<br>
+                    [17:12:00] SYSTEM: Standby for user input.<br>
+                    <span class="blink">_</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 1. 테마 토글 (Dark/Light)
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+        }
+
+        // 2. 레이어 매니지먼트 (Open/Close)
+        function openLayer(id) {
+            closeLayers(); // 기존 열린 레이어 닫기
+            const el = document.getElementById(id);
+            if (el) el.classList.add('open');
+        }
+
+        function closeLayers() {
+            const layers = document.querySelectorAll('.side-layer');
+            layers.forEach(l => l.classList.remove('open'));
+        }
+
+        // 3. 터미널 타이핑 효과 시뮬레이션
+        const logLines = [
+            "> [17:12:05] Agent_Research: Analyzing TikTok trends for 'IVE'...",
+            "> [17:12:10] Agent_Writer: Drafting content with 'Cheomkok' persona...",
+            "> [17:12:15] System: Optimizing keywords for Naver SmartBlock...",
+            "> [17:12:20] AEO: Ranking prediction score: 94/100 (Excellent)",
+            "> [17:12:25] OSMU: Preparing Instagram Story format..."
+        ];
+        let lineIdx = 0;
+
+        setInterval(() => {
+            const logEl = document.getElementById('typing-log');
+            if (logEl) {
+                // 페이드 아웃/인 효과를 위해 텍스트 교체
+                logEl.style.opacity = 0;
+                setTimeout(() => {
+                    logEl.innerText = logLines[lineIdx];
+                    logEl.style.opacity = 1;
+                    lineIdx = (lineIdx + 1) % logLines.length;
+                }, 200);
+            }
+        }, 4000); // 4초마다 로그 변경
+    </script>
+</body>
+
+</html>
