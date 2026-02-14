@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE AI - Multi-Platform Master</title>
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES (VANTAGE IDENTITY MAINTAINED)
+           ========================================================================== */
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --footer-height: 48px;
+
+            --bg-body: #f9f9f9;
+            --bg-white: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-terminal: #000000;
+
+            --text-main: #111111;
+            --text-sub: #666666;
+            --text-terminal: #00ff00;
+
+            --border-thick: 2px solid #000000;
+            --border-thin: 1px solid #e0e0e0;
+
+            --accent-yellow: #FFD700;
+            --accent-blue: #0055ff;
+            --accent-purple: #9C27B0;
+            --accent-red: #ff3300;
+
+            --brand-naver: #03C75A;
+            --brand-tistory: #FF5722;
+            --brand-wp: #21759B;
+            --brand-google: #F4B400;
+
+            --status-green: #00C853;
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.05);
+            --trans-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-white: #1e1e1e;
+            --bg-sidebar: #181818;
+            --text-main: #eeeeee;
+            --text-sub: #aaaaaa;
+            --border-thick: 2px solid #333333;
+            --border-thin: 1px solid #333333;
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background-color var(--trans-fast), color var(--trans-fast);
+        }
+
+        /* --- LAYOUT STRUCTURE (Identical to Previous Version) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            justify-content: space-between;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: var(--trans-fast);
+            border-radius: 4px;
+        }
+
+        .nav-item.active {
+            background: var(--accent-yellow);
+            border: var(--border-thick);
+            box-shadow: 4px 4px 0px #000;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            padding-left: 22px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: var(--bg-white);
+            border-bottom: var(--border-thick);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        /* --- NEW GRID FOR MULTI-PLATFORM CARDS --- */
+        .workspace-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            /* Wider for multi-track */
+            gap: 24px;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-bottom: 60px;
+        }
+
+        /* --- CARD DESIGN (ENHANCED FOR PRISM ARCHITECTURE) --- */
+        .card {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: transform var(--trans-fast), box-shadow var(--trans-fast);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .tag-badge {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 1px solid #000;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        /* Category Tags */
+        .tag-ent {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .tag-eco {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        /* --- SNAPSHOT AREA (Central RAG Source) --- */
+        .card-snapshot {
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f0f0f0;
+            border: 1px dashed #999;
+            border-radius: 4px;
+        }
+
+        .snapshot-title {
+            font-size: 10px;
+            font-weight: 900;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .keyword-chip {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 12px;
+            margin-right: 5px;
+        }
+
+        .rag-status {
+            float: right;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--status-green);
+        }
+
+        /* --- PRISM PIPELINE (The New Core UI) --- */
+        .prism-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .platform-track {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+
+        .platform-track:hover {
+            border-color: #000;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .p-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 900;
+            color: #fff;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Platform Brand Colors */
+        .bg-naver {
+            background: var(--brand-naver);
+        }
+
+        .bg-tistory {
+            background: var(--brand-tistory);
+        }
+
+        .bg-wp {
+            background: var(--brand-wp);
+        }
+
+        .p-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .p-persona {
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .p-status {
+            font-size: 10px;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .p-action {
+            margin-left: 10px;
+        }
+
+        .btn-mini {
+            font-size: 10px;
+            padding: 4px 8px;
+            border: 1px solid #000;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .btn-mini:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Progress Dots within Track */
+        .track-dots {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #eee;
+            border-radius: 50%;
+        }
+
+        .dot.done {
+            background: var(--status-green);
+        }
+
+        .dot.active {
+            background: var(--accent-blue);
+            animation: blink 1s infinite;
+        }
+
+        /* --- FOOTER & LAYERS (Classic Style) --- */
+        .debug-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            border-top: var(--border-thick);
+            z-index: 300;
+        }
+
+        .side-layer {
+            position: fixed;
+            top: 0;
+            right: -700px;
+            width: 650px;
+            height: 100vh;
+            background: var(--bg-white);
+            border-left: var(--border-thick);
+            z-index: 500;
+            transition: right var(--trans-smooth);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .side-layer.open {
+            right: 0;
+        }
+
+        .layer-header {
+            padding: 25px;
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .layer-title {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .layer-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .btn-black {
+            background: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #000;
+            padding: 6px 14px;
+            border: 2px solid #000;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo">VANTAGE <span>AI</span></div>
+            <ul class="nav-menu">
+                <li class="nav-item">01. DASHBOARD</li>
+                <li class="nav-item active">02. WORKSPACE</li>
+                <li class="nav-item">03. STUDIO</li>
+                <li class="nav-item">04. INTELLIGENCE</li>
+                <li class="nav-item">05. SETTINGS</li>
+            </ul>
+        </div>
+        <div style="padding-top:20px; border-top:var(--border-thin)">
+            <div style="font-weight:900; font-size: 16px;">체험콕 (Master)</div>
+            <div style="font-size:11px; color:var(--text-sub);">● PRISM ENGINE ACTIVE</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 style="font-weight:900; letter-spacing: -0.5px;">MULTI-PLATFORM MASTER</h2>
+                <div
+                    style="font-size: 11px; font-weight:800; padding: 4px 12px; background: var(--accent-yellow); border:1px solid #000;">
+                    OSMU MODE ON</div>
+            </div>
+            <div style="display:flex; gap:12px">
+                <button class="btn-outline" onclick="toggleTheme()">🌓 THEME</button>
+                <button class="btn-black">+ NEW CAMPAIGN</button>
+            </div>
+        </header>
+
+        <div class="workspace-grid">
+
+            <!-- [CARD 1] ENTERTAINMENT (Multi-Persona) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-ent">ENTERTAINMENT</span>
+                        <h3 style="font-size:20px; font-weight:900;">아이브(IVE) 챌린지 캠페인</h3>
+                    </div>
+                    <button class="btn-outline" onclick="openLayer('full-log-layer')">LOG</button>
+                </div>
+
+                <!-- Central Intelligence (RAG) -->
+                <div class="card-snapshot">
+                    <div class="snapshot-title">CENTRAL INTELLIGENCE (SHARED RAG) <span class="rag-status">● LIVE</span>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <span class="keyword-chip">#아이브_신곡</span>
+                        <span class="keyword-chip">#틱톡_챌린지</span>
+                        <span class="keyword-chip">#거울모드</span>
+                    </div>
+                    <div style="font-size:11px; color:#555;">Target: 3 Platforms | Est. Reach: 15,000+ views</div>
+                </div>
+
+                <!-- Prism Pipeline Tracks -->
+                <div class="prism-container">
+
+                    <!-- Track 1: Naver -->
+                    <div class="platform-track">
+                        <div class="p-icon bg-naver">N</div>
+                        <div class="p-info">
+                            <div class="p-persona">체험콕 (Reviewer)</div>
+                            <div class="p-status">
+                                <span style="color:var(--accent-blue)">Generating Title...</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div> <!-- Keyword -->
+                            <div class="dot active"></div> <!-- Title -->
+                            <div class="dot"></div> <!-- Content -->
+                            <div class="dot"></div> <!-- Upload -->
+                        </div>
+                        <div class="p-action"><button class="btn-mini">EDIT</button></div>
+                    </div>
+
+                    <!-- Track 2: Tistory -->
+                    <div class="platform-track">
+                        <div class="p-icon bg-tistory">T</div>
+                        <div class="p-info">
+                            <div class="p-persona">연예편집장 (Analyst)</div>
+                            <div class="p-status">
+                                <span style="color:var(--text-sub)">Queued (Waiting for Naver)</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="p-action"><button class="btn-mini">EDIT</button></div>
+                    </div>
+
+                    <!-- Track 3: WordPress -->
+                    <div class="platform-track">
+                        <div class="p-icon bg-wp">W</div>
+                        <div class="p-info">
+                            <div class="p-persona">연예블 (Columnist)</div>
+                            <div class="p-status">
+                                <span style="color:var(--text-sub)">Queued</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <div class="p-action"><button class="btn-mini">EDIT</button></div>
+                    </div>
+
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:11px; font-weight:800; color:var(--text-sub)">TOTAL PROGRESS: 35%</div>
+                    <button class="btn-black" style="font-size:11px; padding: 10px 20px;">MANAGE ALL</button>
+                </div>
+            </div>
+
+            <!-- [CARD 2] ECONOMY (Completed Example) -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-eco">ECONOMY</span>
+                        <h3 style="font-size:20px; font-weight:900;">2026 주담대 금리 분석</h3>
+                    </div>
+                    <button class="btn-outline">LOG</button>
+                </div>
+
+                <div class="card-snapshot">
+                    <div class="snapshot-title">CENTRAL INTELLIGENCE (SHARED RAG) <span class="rag-status">● DONE</span>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <span class="keyword-chip">#주담대_금리</span>
+                        <span class="keyword-chip">#한국은행</span>
+                        <span class="keyword-chip">#부동산_전망</span>
+                    </div>
+                    <div style="font-size:11px; color:#555;">Target: 3 Platforms | Upload Complete</div>
+                </div>
+
+                <div class="prism-container">
+                    <!-- Naver -->
+                    <div class="platform-track" style="background:#f9fff9; border-color:#03C75A;">
+                        <div class="p-icon bg-naver">N</div>
+                        <div class="p-info">
+                            <div class="p-persona">돈의결 (Experience)</div>
+                            <div class="p-status">
+                                <span style="color:var(--status-green)">Upload Complete</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                        </div>
+                        <div class="p-action"><button class="btn-mini">LINK</button></div>
+                    </div>
+
+                    <!-- Tistory -->
+                    <div class="platform-track" style="background:#fffaf9; border-color:#FF5722;">
+                        <div class="p-icon bg-tistory">T</div>
+                        <div class="p-info">
+                            <div class="p-persona">머니파이 (Info)</div>
+                            <div class="p-status">
+                                <span style="color:var(--status-green)">Upload Complete</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                        </div>
+                        <div class="p-action"><button class="btn-mini">LINK</button></div>
+                    </div>
+
+                    <!-- WordPress -->
+                    <div class="platform-track" style="background:#f9fcff; border-color:#21759B;">
+                        <div class="p-icon bg-wp">W</div>
+                        <div class="p-info">
+                            <div class="p-persona">부의철칙 (Theory)</div>
+                            <div class="p-status">
+                                <span style="color:var(--status-green)">Upload Complete</span>
+                            </div>
+                        </div>
+                        <div class="track-dots">
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                            <div class="dot done"></div>
+                        </div>
+                        <div class="p-action"><button class="btn-mini">LINK</button></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="debug-footer" onclick="openLayer('full-log-layer')">
+            <span style="color: var(--accent-red); font-weight: 900; margin-right: 15px;" class="blink">● SYSTEM
+                LIVE</span>
+            <span id="typing-log">> [18:05:12] Prism Engine: Forking RAG context to 3 personas...</span>
+            <span style="margin-left:auto; letter-spacing: 1px; color: #888;">CONSOLE ▲</span>
+        </footer>
+
+        <!-- LOG LAYER (Preserved) -->
+        <div id="full-log-layer" class="side-layer">
+            <div class="layer-header" style="background:#000; color:#0f0;">
+                <div class="layer-title">💻 PRISM ENGINE TERMINAL</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content"
+                style="background:#000; color:#0f0; font-family:monospace; font-size:13px; line-height:1.6;">
+                > [18:04:10] Master: Keyword '#IVE_Challenge' selected.<br>
+                > [18:04:12] RAG: Retrieved 25 related articles from Naver/Google.<br>
+                > [18:04:15] <span style="color:#00ffff">FORK_PROCESS_START</span><br>
+                > [18:04:16] -- Thread 1 (Naver): Loaded Persona 'Cheomkok'<br>
+                > [18:04:16] -- Thread 2 (Tistory): Loaded Persona 'Editor'<br>
+                > [18:04:16] -- Thread 3 (WP): Loaded Persona 'WealthRule'<br>
+                > [18:05:00] Thread 1: Title Generated "아센디오 챌린지, 나만 어려워?"<br>
+                > [18:05:05] Thread 2: Title Generated "IVE Accendio Dance Challenge Analysis"<br>
+                > [18:05:10] <span style="color:orange">WARNING:</span> Wordpress API response slow (300ms).<br>
+                <span class="blink">_</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+        function openLayer(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('open');
+        }
+        function closeLayers() {
+            const layers = document.querySelectorAll('.side-layer');
+            layers.forEach(l => l.classList.remove('open'));
+        }
+
+        const logLines = [
+            "> [18:05:20] Naver Agent: Drafting body content (Progress 40%)...",
+            "> [18:05:22] Tistory Agent: Converting images to WebP format...",
+            "> [18:05:25] WP Agent: Generating SEO meta description...",
+            "> [18:05:30] Prism Engine: Monitoring Duplicate Content Score..."
+        ];
+        let lineIdx = 0;
+        setInterval(() => {
+            const logEl = document.getElementById('typing-log');
+            if (logEl) {
+                logEl.innerText = logLines[lineIdx];
+                lineIdx = (lineIdx + 1) % logLines.length;
+            }
+        }, 3000);
+    </script>
+</body>
+
+</html>
