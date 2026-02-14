@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANTAGE AI - Workspace Master (High Density Version)</title>
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & THEME SYSTEM
+           ========================================================================== */
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --footer-height: 48px;
+
+            --bg-body: #f9f9f9;
+            --bg-white: #ffffff;
+            --bg-sidebar: #ffffff;
+            --bg-terminal: #000000;
+
+            --text-main: #111111;
+            --text-sub: #666666;
+            --text-terminal: #00ff00;
+
+            --border-thick: 2px solid #000000;
+            --border-thin: 1px solid #e0e0e0;
+            --accent-yellow: #FFD700;
+            --accent-blue: #0055ff;
+            --accent-purple: #9C27B0;
+            --accent-red: #ff3300;
+
+            --status-green: #00C853;
+            --status-orange: #FFAB00;
+
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 12px 12px 0px rgba(0, 0, 0, 0.08);
+            --trans-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-white: #1e1e1e;
+            --bg-sidebar: #181818;
+            --text-main: #eeeeee;
+            --text-sub: #aaaaaa;
+            --border-thick: 2px solid #333333;
+            --border-thin: 1px solid #333333;
+            --shadow-card: 8px 8px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background-color var(--trans-fast), color var(--trans-fast);
+        }
+
+        /* --- UI COMPONENTS --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            justify-content: space-between;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: var(--trans-fast);
+            border-radius: 4px;
+        }
+
+        .nav-item.active {
+            background: var(--accent-yellow);
+            border: var(--border-thick);
+            box-shadow: 4px 4px 0px #000;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            padding-left: 22px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .top-bar {
+            height: var(--header-height);
+            background: var(--bg-white);
+            border-bottom: var(--border-thick);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        /* GRID SYSTEM: 3개 이상의 카드에 대응 */
+        .workspace-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 24px;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-bottom: 60px;
+        }
+
+        /* CARD ENHANCEMENT */
+        .card {
+            background: var(--bg-white);
+            border: var(--border-thick);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: transform var(--trans-fast), box-shadow var(--trans-fast);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tag-badge {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 1px solid #000;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .tag-ent {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .tag-eco {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        .tag-health {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* SNAPSHOT AREA: 실시간 수집 데이터 요약 */
+        .card-snapshot {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f4f4f4;
+            border: 1px dashed #999;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .snapshot-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .snapshot-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .s-label {
+            font-weight: 800;
+            color: var(--text-sub);
+        }
+
+        .s-value {
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        /* WORKFLOW & PROGRESS */
+        .agent-workflow {
+            margin-top: auto;
+            padding-top: 15px;
+        }
+
+        .progress-bar-container {
+            height: 4px;
+            background: #eee;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .workflow-track {
+            display: flex;
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 4px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .agent-node {
+            flex: 1;
+            text-align: center;
+            padding: 6px 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .agent-node:hover {
+            background: #f0f0f0;
+        }
+
+        .agent-node.running {
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .node-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc;
+            margin: 0 auto 4px;
+            border: 1px solid #999;
+        }
+
+        .agent-node.running .node-dot {
+            background: var(--status-green);
+            border-color: var(--status-green);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .node-label {
+            font-size: 9px;
+            font-weight: 900;
+            color: var(--text-sub);
+        }
+
+        @keyframes pulse-green {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* OVERLAYS & TERMINAL */
+        .side-layer {
+            position: fixed;
+            top: 0;
+            right: -700px;
+            width: 650px;
+            height: 100vh;
+            background: var(--bg-white);
+            border-left: var(--border-thick);
+            z-index: 500;
+            transition: right var(--trans-smooth);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .side-layer.open {
+            right: 0;
+        }
+
+        .layer-header {
+            padding: 25px;
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .layer-title {
+            font-size: 20px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .layer-close {
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .layer-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: var(--bg-body);
+        }
+
+        .debug-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: var(--footer-height);
+            background: var(--bg-terminal);
+            color: var(--text-terminal);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            border-top: var(--border-thick);
+            z-index: 300;
+        }
+
+        .blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .btn-black {
+            background: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #000;
+            padding: 6px 14px;
+            border: 2px solid #000;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo">VANTAGE <span>AI</span></div>
+            <ul class="nav-menu">
+                <li class="nav-item">01. DASHBOARD</li>
+                <li class="nav-item active">02. WORKSPACE</li>
+                <li class="nav-item">03. STUDIO</li>
+                <li class="nav-item">04. INTELLIGENCE</li>
+                <li class="nav-item">05. SETTINGS</li>
+            </ul>
+        </div>
+        <div style="padding-top:20px; border-top:var(--border-thin)">
+            <div style="font-weight:900; font-size: 16px;">체험콕 (Master)</div>
+            <div style="font-size:11px; color:var(--text-sub);">● VANTAGE PRO ACTIVE</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 style="font-weight:900; letter-spacing: -0.5px;">WORKSPACE MASTER</h2>
+                <div
+                    style="font-size: 11px; font-weight:800; padding: 4px 12px; background: var(--accent-yellow); border:1px solid #000;">
+                    3+ PROJECTS ACTIVE</div>
+            </div>
+            <div style="display:flex; gap:12px">
+                <button class="btn-outline" onclick="toggleTheme()">🌓 THEME</button>
+                <button class="btn-black" onclick="alert('새 프로젝트 마법사를 시작합니다.')">+ NEW PROJECT</button>
+            </div>
+        </header>
+
+        <div class="workspace-grid">
+
+            <!-- [CARD 1] ENTERTAINMENT -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-ent">ENTERTAINMENT</span>
+                        <h3 style="font-size:20px; font-weight:900;">아이브(IVE) 신곡 챌린지 분석</h3>
+                    </div>
+                    <button class="btn-outline" onclick="openLayer('full-log-layer')">LOG</button>
+                </div>
+
+                <!-- Snapshot 영역 추가 -->
+                <div class="card-snapshot">
+                    <div class="snapshot-item">
+                        <span class="s-label">Collected Keywords</span>
+                        <span class="s-value">24 / 50</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Selected Main</span>
+                        <span class="s-value" style="color:var(--accent-blue)">#아이브_아센디오</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Generated Title</span>
+                        <span class="s-value">"아센디오" 챌린지, 나만 모르는 숨은 꿀팁?</span>
+                    </div>
+                </div>
+
+                <div class="agent-workflow">
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <div class="workflow-track">
+                        <div class="agent-node running" onclick="openLayer('research-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">RESEARCH</div>
+                        </div>
+                        <div class="agent-node running" onclick="openLayer('writer-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">WRITER</div>
+                        </div>
+                        <div class="agent-node" onclick="openLayer('fact-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">FACT-CHECK</div>
+                        </div>
+                        <div class="agent-node" onclick="openLayer('aeo-layer')">
+                            <div class="node-dot"></div>
+                            <div class="node-label">AEO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:11px; font-weight:800; color:var(--accent-blue)">STATUS: Generating Content...
+                    </div>
+                    <button class="btn-black" style="font-size:11px; padding: 8px 16px;">OPEN STUDIO</button>
+                </div>
+            </div>
+
+            <!-- [CARD 2] ECONOMY -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-eco">ECONOMY</span>
+                        <h3 style="font-size:20px; font-weight:900;">2026 주택담보대출 금리 전망</h3>
+                    </div>
+                    <button class="btn-outline">LOG</button>
+                </div>
+
+                <div class="card-snapshot">
+                    <div class="snapshot-item">
+                        <span class="s-label">Collected Keywords</span>
+                        <span class="s-value">12 / 30</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Selected Main</span>
+                        <span class="s-value" style="color:var(--accent-blue)">#주담대_금리_2026</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Generated Title</span>
+                        <span class="s-value">내 집 마련 꿈, 2026년 금리 하락이 기회일까?</span>
+                    </div>
+                </div>
+
+                <div class="agent-workflow">
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" style="width: 100%; background:var(--status-green)"></div>
+                    </div>
+                    <div class="workflow-track">
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">RESEARCH</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">WRITER</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">FACT-CHECK</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">AEO</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:11px; font-weight:800; color:var(--status-green)">STATUS: Draft Complete</div>
+                    <button class="btn-outline" style="font-size:11px; padding: 8px 16px;">VIEW DETAILS</button>
+                </div>
+            </div>
+
+            <!-- [CARD 3] HEALTH (새로 추가됨) -->
+            <div class="card" style="opacity: 0.85;">
+                <div class="card-header">
+                    <div>
+                        <span class="tag-badge tag-health">HEALTH</span>
+                        <h3 style="font-size:20px; font-weight:900;">미세먼지 디톡스 식단 가이드</h3>
+                    </div>
+                    <button class="btn-outline">LOG</button>
+                </div>
+
+                <div class="card-snapshot">
+                    <div class="snapshot-item">
+                        <span class="s-label">Collected Keywords</span>
+                        <span class="s-value">Waiting...</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Selected Main</span>
+                        <span class="s-value">-</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <span class="s-label">Generated Title</span>
+                        <span class="s-value">대기 중...</span>
+                    </div>
+                </div>
+
+                <div class="agent-workflow">
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="workflow-track">
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">RESEARCH</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">WRITER</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">FACT-CHECK</div>
+                        </div>
+                        <div class="agent-node">
+                            <div class="node-dot"></div>
+                            <div class="node-label">AEO</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center">
+                    <div style="font-size:11px; font-weight:800; color:var(--text-sub)">STATUS: Scheduled (09:00 AM)
+                    </div>
+                    <button class="btn-outline" style="font-size:11px; padding: 8px 16px;">EDIT SCHEDULE</button>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="debug-footer" onclick="openLayer('full-log-layer')">
+            <span style="color: var(--accent-red); font-weight: 900; margin-right: 15px;" class="blink">● SYSTEM
+                LIVE</span>
+            <span id="typing-log">> [17:22:01] System: Scanning target blogs... Memory optimized.</span>
+            <span style="margin-left:auto; letter-spacing: 1px; color: #888;">CONSOLE ▲</span>
+        </footer>
+
+        <!-- LAYERS (상세 정보 창) -->
+        <div id="research-layer" class="side-layer">
+            <div class="layer-header">
+                <div class="layer-title">🔍 RESEARCH AGENT</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content">
+                <div style="font-size:14px; line-height:1.6;">에이전트가 현재 수집한 데이터 소스와 키워드 목록이 상세히 표시됩니다.</div>
+            </div>
+        </div>
+
+        <div id="full-log-layer" class="side-layer">
+            <div class="layer-header" style="background:#000; color:#0f0;">
+                <div class="layer-title">💻 SYSTEM TERMINAL</div>
+                <div class="layer-close" onclick="closeLayers()">×</div>
+            </div>
+            <div class="layer-content" style="background:#000; color:#0f0; font-family:monospace; font-size:13px;">
+                > Loading System... <br>
+                > All agents standby... <br>
+                <span class="blink">_</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+
+        function openLayer(id) {
+            closeLayers();
+            const el = document.getElementById(id);
+            if (el) el.classList.add('open');
+        }
+
+        function closeLayers() {
+            const layers = document.querySelectorAll('.side-layer');
+            layers.forEach(l => l.classList.remove('open'));
+        }
+
+        const logLines = [
+            "> [17:22:05] Agent_Research: Keywords collected (24/50)...",
+            "> [17:22:10] Agent_Writer: Drafting main content using persona...",
+            "> [17:22:15] System: Monitoring Naver search trends...",
+            "> [17:22:20] AEO: Optimization score 94/100."
+        ];
+        let lineIdx = 0;
+        setInterval(() => {
+            const logEl = document.getElementById('typing-log');
+            if (logEl) {
+                logEl.style.opacity = 0;
+                setTimeout(() => {
+                    logEl.innerText = logLines[lineIdx];
+                    logEl.style.opacity = 1;
+                    lineIdx = (lineIdx + 1) % logLines.length;
+                }, 200);
+            }
+        }, 4000);
+    </script>
+</body>
+
+</html>
