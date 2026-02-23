@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogAuto Premium UX/UI</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        /* ─────────────────────────────────────────────────────────────
+           디자인 시스템 (Premium & Seamless Flow)
+        ───────────────────────────────────────────────────────────── */
+        :root {
+            /* Color Palette (Dark Default) */
+            --bg-base: #09090b;
+            --bg-surface: #18181b;
+            --bg-elevated: #27272a;
+            
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --accent: #6366f1; /* Indigo */
+            --accent-hover: #4f46e5;
+            --accent-light: rgba(99, 102, 241, 0.15);
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+
+            /* Metrics */
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --sidebar-w: 260px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f4f4f5;
+            --bg-surface: #ffffff;
+            --bg-elevated: #f4f4f5;
+            --border-soft: #e4e4e7;
+            --border-hover: #d4d4d8;
+            --text-primary: #09090b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+        }
+
+        /* ──────────────── Base & Layout ──────────────── */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ──────────────── Sidebar ──────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+        }
+        .brand i { color: var(--accent); }
+
+        .nav-group {
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+        .nav-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+        }
+        .nav-item:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        /* ──────────────── Main Content ──────────────── */
+        .main-view {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .page {
+            display: none;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeUp 0.4s ease forwards;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ──────────────── Headers & Components ──────────────── */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .page-desc { color: var(--text-secondary); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        
+        .btn-outline {
+            border-color: var(--border-soft);
+            background: transparent;
+            color: var(--text-primary);
+        }
+        .btn-outline:hover { background: var(--bg-elevated); border-color: var(--border-hover); }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: var(--transition);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .badge.active { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge.ai { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+        /* ──────────────── Dashboard ──────────────── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .stat-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+        .stat-value { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+        .stat-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+
+        /* ──────────────── Flow / Pipeline Builder (NEW UX) ──────────────── */
+        .pipeline-card {
+            display: flex;
+            align-items: stretch;
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-lg);
+            background: var(--bg-surface);
+            margin-bottom: 16px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .pipeline-card:hover { border-color: var(--accent); }
+        
+        .pipeline-status {
+            width: 6px;
+            background: var(--success);
+        }
+        
+        .pipeline-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-elevated);
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-soft);
+        }
+        .flow-arrow { color: var(--text-muted); }
+        
+        .step-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
+        .step-info p { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* ──────────────── Tables ──────────────── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-soft);
+        }
+        .data-table th { color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; }
+        .data-table tr:hover td { background: var(--bg-elevated); }
+
+        /* ──────────────── Utilities ──────────────── */
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-4 { gap: 16px; }
+        .text-accent { color: var(--accent); }
+        .text-muted { color: var(--text-muted); }
+        .mt-4 { margin-top: 16px; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <i data-lucide="bot"></i> BlogAuto Pro
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">OVERVIEW</div>
+            <div class="nav-item active" onclick="nav('dashboard', this)">
+                <i data-lucide="layout-dashboard" size="18"></i> 대시보드
+            </div>
+            <div class="nav-item" onclick="nav('analytics', this)">
+                <i data-lucide="bar-chart-2" size="18"></i> 성과 리포트
+            </div>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">AUTOMATION CORE</div>
+            <!-- 파편화된 메뉴를 '파이프라인' 하나로 통합하여 흐름을 직관적으로 만듦 -->
+            <div class="nav-item" onclick="nav('pipelines', this)">
+                <i data-lucide="git-merge" size="18"></i> 자동화 파이프라인
+            </div>
+            <div class="nav-item" onclick="nav('contents', this)">
+                <i data-lucide="library" size="18"></i> 콘텐츠 허브 (발행 관리)
+            </div>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-title">ASSETS & SETTINGS</div>
+            <div class="nav-item" onclick="nav('assets', this)">
+                <i data-lucide="layers" size="18"></i> 에셋 (프롬프트/이미지)
+            </div>
+            <div class="nav-item" onclick="nav('accounts', this)">
+                <i data-lucide="users" size="18"></i> 연동 계정 관리
+            </div>
+            <div class="nav-item" onclick="nav('settings', this)">
+                <i data-lucide="settings" size="18"></i> 시스템 설정
+            </div>
+        </div>
+
+        <div style="margin-top: auto; padding: 24px;">
+            <div class="card" style="padding: 16px; text-align: center; background: var(--bg-elevated);">
+                <i data-lucide="zap" size="24" class="text-accent" style="margin-bottom:8px"></i>
+                <div style="font-size: 0.8rem; font-weight: 700;">프리미엄 플랜</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">일일 API 한도: 84% 사용</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-view">
+        
+        <!-- 1. DASHBOARD -->
+        <section id="dashboard" class="page active">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">안녕하세요, 매니저님 👋</h1>
+                    <p class="page-desc">2개의 파이프라인이 현재 자동화되어 동작 중입니다.</p>
+                </div>
+                <button class="btn btn-primary"><i data-lucide="plus" size="16"></i> 새 파이프라인 생성</button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="card stat-card">
+                    <div class="flex justify-between items-center">
+                        <div class="stat-icon" style="color:var(--accent)"><i data-lucide="git-merge"></i></div>
+                        <span class="badge active">정상 가동</span>
+                    </div>
+                    <div>
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">활성 파이프라인</div>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="flex justify-between items-center">
+                        <div class="stat-icon" style="color:var(--success)"><i data-lucide="check-circle"></i></div>
+                        <span class="text-muted" style="font-size:0.8rem">오늘</span>
+                    </div>
+                    <div>
+                        <div class="stat-value">14</div>
+                        <div class="stat-label">자동 발행 완료</div>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="flex justify-between items-center">
+                        <div class="stat-icon" style="color:var(--warning)"><i data-lucide="clock"></i></div>
+                        <span class="text-muted" style="font-size:0.8rem">대기중</span>
+                    </div>
+                    <div>
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">발행 대기 큐</div>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="flex justify-between items-center">
+                        <div class="stat-icon"><i data-lucide="rss"></i></div>
+                        <span class="text-muted" style="font-size:0.8rem">오늘</span>
+                    </div>
+                    <div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">수집된 타겟 뉴스</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 16px; font-size: 1.1rem;">실시간 시스템 로그</h3>
+            <div class="card" style="font-family: monospace; font-size: 0.85rem; height: 200px; overflow-y: auto; background: #000;">
+                <div class="flex gap-4" style="margin-bottom:8px;"><span style="color:var(--text-muted)">10:24:01</span> <span style="color:var(--success)">[SUCCESS]</span> <span>네이버 블로그(IT트렌드) '애플 M4칩 리뷰' 발행 완료</span></div>
+                <div class="flex gap-4" style="margin-bottom:8px;"><span style="color:var(--text-muted)">10:23:45</span> <span style="color:var(--info)">[INFO]</span> <span>Gemini API: 본문 및 제목 생성 완료 (토큰: 1,240)</span></div>
+                <div class="flex gap-4" style="margin-bottom:8px;"><span style="color:var(--text-muted)">10:23:10</span> <span style="color:var(--info)">[INFO]</span> <span>파이프라인 'IT 뉴스 자동화' 트리거 작동</span></div>
+                <div class="flex gap-4" style="margin-bottom:8px;"><span style="color:var(--text-muted)">09:00:00</span> <span style="color:var(--success)">[SUCCESS]</span> <span>티스토리(경제뷰) '환율 전망' 발행 완료</span></div>
+            </div>
+        </section>
+
+        <!-- 2. PIPELINES (핵심 UX 개선: 파편화된 기능을 흐름으로 통합) -->
+        <section id="pipelines" class="page">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">자동화 파이프라인</h1>
+                    <p class="page-desc">정보 수집부터 AI 작성, 발행까지의 규칙을 설계하고 관리합니다.</p>
+                </div>
+                <button class="btn btn-primary"><i data-lucide="plus" size="16"></i> 파이프라인 만들기</button>
+            </div>
+
+            <!-- Pipeline 1 -->
+            <div class="pipeline-card">
+                <div class="pipeline-status"></div>
+                <div class="pipeline-content">
+                    <div style="width: 200px;">
+                        <span class="badge active" style="margin-bottom: 8px;">Running (2h 주기)</span>
+                        <h3 style="font-size: 1.1rem; font-weight: 700;">IT 최신 뉴스 자동화</h3>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top:4px;">최근 실행: 10분 전</p>
+                    </div>
+                    
+                    <div class="flow-steps">
+                        <!-- Step 1: Source -->
+                        <div class="flow-step">
+                            <i data-lucide="rss" class="text-accent"></i>
+                            <div class="step-info">
+                                <h4>뉴스 수집</h4>
+                                <p>키워드: 애플,반도체</p>
+                            </div>
+                        </div>
+                        <i data-lucide="arrow-right" class="flow-arrow"></i>
+                        
+                        <!-- Step 2: AI Processing -->
+                        <div class="flow-step" style="border-color: rgba(168, 85, 247, 0.5); background: rgba(168, 85, 247, 0.05);">
+                            <i data-lucide="bot" style="color: #c084fc;"></i>
+                            <div class="step-info">
+                                <h4>AI 페르소나 적용</h4>
+                                <p>친근한 IT 리뷰어 톤</p>
+                            </div>
+                        </div>
+                        <i data-lucide="arrow-right" class="flow-arrow"></i>
+                        
+                        <!-- Step 3: Destination -->
+                        <div class="flow-step">
+                            <i data-lucide="monitor" class="text-success"></i>
+                            <div class="step-info">
+                                <h4>네이버 블로그 발행</h4>
+                                <p>계정: imgine_lab</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" style="padding: 8px;"><i data-lucide="settings-2" size="16"></i></button>
+                        <button class="btn btn-outline" style="padding: 8px;"><i data-lucide="pause" size="16"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline 2 -->
+            <div class="pipeline-card" style="opacity: 0.7;">
+                <div class="pipeline-status" style="background: var(--text-muted)"></div>
+                <div class="pipeline-content">
+                    <div style="width: 200px;">
+                        <span class="badge" style="margin-bottom: 8px; background:var(--bg-elevated); color:var(--text-muted)">Paused</span>
+                        <h3 style="font-size: 1.1rem; font-weight: 700;">경제 시황 브리핑</h3>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top:4px;">최근 실행: 2일 전</p>
+                    </div>
+                    
+                    <div class="flow-steps">
+                        <div class="flow-step"><i data-lucide="trending-up" class="text-accent"></i><div class="step-info"><h4>네이버 금융</h4><p>환율/증시 Top5</p></div></div>
+                        <i data-lucide="arrow-right" class="flow-arrow"></i>
+                        <div class="flow-step"><i data-lucide="bot" style="color: #c084fc;"></i><div class="step-info"><h4>요약 & 전문 분석가</h4><p>객관적이고 신뢰감있게</p></div></div>
+                        <i data-lucide="arrow-right" class="flow-arrow"></i>
+                        <div class="flow-step"><i data-lucide="layout" class="text-success"></i><div class="step-info"><h4>티스토리 발행</h4><p>계정: econo_view</p></div></div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" style="padding: 8px;"><i data-lucide="settings-2" size="16"></i></button>
+                        <button class="btn btn-outline" style="padding: 8px;"><i data-lucide="play" size="16"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CONTENT HUB -->
+        <section id="contents" class="page">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">콘텐츠 허브</h1>
+                    <p class="page-desc">파이프라인을 통해 생성된 모든 포스트를 확인하고 관리합니다.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-outline">필터: 전체 <i data-lucide="chevron-down" size="14"></i></button>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>상태</th>
+                            <th>제목 & 썸네일</th>
+                            <th>파이프라인 (소스)</th>
+                            <th>발행처</th>
+                            <th>생성/발행 일시</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge active">발행완료</span></td>
+                            <td>
+                                <div style="font-weight: 700; margin-bottom: 4px;">M4 아이폰 17 울트라, 루머 완벽 정리!</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">이미지 3장 첨부됨</div>
+                            </td>
+                            <td><span class="badge" style="background:var(--bg-elevated)">IT 뉴스 자동화</span></td>
+                            <td>네이버 (imgine_lab)</td>
+                            <td class="text-muted" style="font-size:0.85rem">오늘 10:24</td>
+                            <td><button class="btn btn-outline" style="padding: 6px 10px; font-size:0.8rem">블로그 보기</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background: rgba(59, 130, 246, 0.15); color: var(--info);">발행대기</span></td>
+                            <td>
+                                <div style="font-weight: 700; margin-bottom: 4px;">반도체 슈퍼사이클 다시 오나? 삼성전자 전망</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">본문 생성 완료, 이미지 탐색 중</div>
+                            </td>
+                            <td><span class="badge" style="background:var(--bg-elevated)">IT 뉴스 자동화</span></td>
+                            <td>네이버 (imgine_lab)</td>
+                            <td class="text-muted" style="font-size:0.85rem">오늘 12:00 예정</td>
+                            <td><button class="btn btn-outline" style="padding: 6px 10px; font-size:0.8rem">초안 편집</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Placeholder for other sections to demonstrate navigation works -->
+        <section id="analytics" class="page"><div class="page-header"><h1 class="page-title">성과 리포트</h1></div><div class="card"><p>트래픽 데이터 및 전환율 차트 영역</p></div></section>
+        <section id="assets" class="page"><div class="page-header"><h1 class="page-title">에셋 관리 (프롬프트/이미지)</h1></div><div class="card"><p>페르소나 프롬프트, 언스플래쉬/Dall-E 이미지 보관함</p></div></section>
+        <section id="accounts" class="page"><div class="page-header"><h1 class="page-title">연동 계정 관리</h1></div><div class="card"><p>네이버, 티스토리, 워드프레스 API 연동 현황</p></div></section>
+        <section id="settings" class="page"><div class="page-header"><h1 class="page-title">시스템 설정</h1></div><div class="card"><p>OpenAI, Gemini API 키 및 글로벌 시스템 설정</p></div></section>
+
+    </main>
+
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Simple Navigation Logic
+        function nav(pageId, element) {
+            // Update Active Nav Item
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            // Update Active Page
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
