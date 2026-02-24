@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogAuto - Multi-Platform Automation</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        /* ─────────────────────────────────────────────────────────────
+           블로그 운영자 중심의 UX/UI 디자인 시스템 (Dark Premium)
+        ───────────────────────────────────────────────────────────── */
+        :root {
+            --bg-base: #0a0a0c;
+            --bg-surface: #141417;
+            --bg-elevated: #1e1e24;
+            
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            
+            --accent: #3b82f6; /* Trustworthy Blue */
+            --accent-hover: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ──────────────── Layout ──────────────── */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            padding: 24px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .nav-menu {
+            padding: 16px 12px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-glow); color: var(--accent); }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ──────────────── Components ──────────────── */
+        .header-section { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .page-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 8px; }
+        .page-desc { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 18px; border-radius: var(--radius-md);
+            font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; border: 1px solid transparent;
+            transition: all 0.2s; font-family: inherit;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-outline { border-color: var(--border-strong); background: transparent; color: var(--text-primary); }
+        .btn-outline:hover { background: var(--bg-elevated); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+
+        .card {
+            background: var(--bg-surface); border: 1px solid var(--border-soft);
+            border-radius: var(--radius-lg); padding: 24px;
+        }
+
+        .badge {
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .badge.run { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge.wait { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge.error { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge.info { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+
+        /* ──────────────── Dashboard: Blog Trackers ──────────────── */
+        .tracker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px; }
+        .blog-tracker {
+            display: flex; flex-direction: column; gap: 16px;
+            border-left: 4px solid var(--border-soft);
+            transition: all 0.2s;
+        }
+        .blog-tracker:hover { border-color: var(--text-secondary); }
+        .blog-tracker.status-run { border-color: var(--success); }
+        .blog-tracker.status-error { border-color: var(--danger); }
+        
+        .tracker-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .blog-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .blog-niche { font-size: 0.8rem; color: var(--text-secondary); background: var(--bg-elevated); padding: 2px 8px; border-radius: 4px; }
+        
+        .tracker-body { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 16px; }
+        .current-task { font-size: 0.9rem; margin-bottom: 12px; }
+        .task-title { font-weight: 700; color: var(--text-primary); margin-top: 4px; }
+        
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; margin-bottom: 8px;}
+        .progress-fill { height: 100%; transition: width 0.3s; }
+        
+        .tracker-footer { display: flex; gap: 10px; margin-top: auto; }
+
+        /* ──────────────── Blog Settings ──────────────── */
+        .settings-grid { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+        .blog-list { display: flex; flex-direction: column; gap: 8px; }
+        .blog-list-item {
+            padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-soft);
+            cursor: pointer; transition: all 0.2s; background: var(--bg-surface);
+        }
+        .blog-list-item.active { border-color: var(--accent); background: var(--accent-glow); }
+        
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+        .form-control {
+            width: 100%; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md); color: var(--text-primary); font-family: inherit; font-size: 0.95rem;
+        }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+
+        /* ──────────────── Content Hub (Table) ──────────────── */
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th { padding: 16px; border-bottom: 1px solid var(--border-strong); color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; }
+        .data-table td { padding: 16px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+        .data-table tr:hover { background: var(--bg-elevated); }
+
+        /* ──────────────── Prompt Builder ──────────────── */
+        .builder-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .analysis-box { background: rgba(139, 92, 246, 0.05); border: 1px dashed rgba(139, 92, 246, 0.3); border-radius: var(--radius-md); padding: 20px; }
+
+        /* ──────────────── Modal (Image Studio / Editor) ──────────────── */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: var(--bg-surface); border: 1px solid var(--border-strong);
+            border-radius: var(--radius-lg); width: 900px; max-width: 95vw;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+        }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 24px; display: flex; gap: 24px; background: var(--bg-base); }
+        
+        .editor-workspace { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; border-radius: var(--radius-md); min-height: 400px; position: relative; overflow: hidden; }
+        .editor-toolbar { width: 60px; display: flex; flex-direction: column; gap: 8px; }
+        .tool-btn {
+            width: 48px; height: 48px; border-radius: 12px; background: var(--bg-surface);
+            border: 1px solid var(--border-soft); color: var(--text-secondary);
+            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+        }
+        .tool-btn:hover, .tool-btn.active { background: var(--accent-glow); color: var(--accent); border-color: var(--accent); }
+
+        /* Utility */
+        .flex { display: flex; } .gap-2 { gap: 8px; } .items-center { align-items: center; } .text-muted { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <i data-lucide="infinity" style="color: var(--accent)"></i> BlogAuto
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="nav('dashboard', this)">
+                <i data-lucide="activity"></i> 자동화 관제탑
+            </div>
+            <div class="nav-item" onclick="nav('settings', this)">
+                <i data-lucide="layout-grid"></i> 개별 블로그 설정
+            </div>
+            <div class="nav-item" onclick="nav('contents', this)">
+                <i data-lucide="layers"></i> 전체 콘텐츠 리스트
+            </div>
+            <div class="nav-item" onclick="nav('builder', this)">
+                <i data-lucide="bot"></i> 지능형 프롬프트 빌더
+            </div>
+        </nav>
+        <div style="padding: 24px; font-size: 0.8rem; color: var(--text-muted);">
+            시스템 상태: <span style="color: var(--success)">All Systems Normal</span><br>
+            마지막 동기화: 1분 전
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- 1. DASHBOARD (자동화 현황 파악 및 이슈 대응) -->
+        <section id="dashboard" class="page active">
+            <div class="header-section">
+                <div>
+                    <h1 class="page-title">자동화 관제탑</h1>
+                    <p class="page-desc">등록된 모든 블로그의 실시간 발행 상태와 이슈를 한눈에 파악합니다.</p>
+                </div>
+                <button class="btn btn-primary" onclick="nav('settings', document.querySelectorAll('.nav-item')[1])"><i data-lucide="plus" size="16"></i> 신규 블로그 연동</button>
+            </div>
+
+            <div class="tracker-grid">
+                <!-- Blog 1: Running properly -->
+                <div class="card blog-tracker status-run">
+                    <div class="tracker-header">
+                        <div>
+                            <div class="blog-name"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=naver" width="20" style="border-radius:4px"> 라이프 해커스</div>
+                            <span class="blog-niche">건강/리빙 전문</span>
+                        </div>
+                        <span class="badge run"><i data-lucide="loader" size="12" class="spin"></i> 자동 발행 중</span>
+                    </div>
+                    <div class="tracker-body">
+                        <div class="current-task text-muted">현재 작업: 본문 작성 완료 ➡️ 네이버 블로그 전송 중</div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: var(--success);"></div></div>
+                        <div class="task-title">"수면 장애 극복하는 롱테일 루틴, 진짜 효과 있을까?"</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px; color: var(--text-secondary);">타겟 키워드: #수면루틴 #불면증극복</div>
+                    </div>
+                    <div class="tracker-footer">
+                        <button class="btn btn-outline" style="flex:1"><i data-lucide="external-link" size="14"></i> 블로그 홈 이동</button>
+                        <button class="btn btn-outline" style="flex:1" onclick="nav('contents', document.querySelectorAll('.nav-item')[2])"><i data-lucide="list" size="14"></i> 예약 큐 보기</button>
+                    </div>
+                </div>
+
+                <!-- Blog 2: Error requires attention -->
+                <div class="card blog-tracker status-error">
+                    <div class="tracker-header">
+                        <div>
+                            <div class="blog-name"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=tistory" width="20" style="border-radius:4px"> 머니 트렌드</div>
+                            <span class="blog-niche">경제/금융 전문</span>
+                        </div>
+                        <span class="badge error"><i data-lucide="alert-triangle" size="12"></i> 일시 정지됨</span>
+                    </div>
+                    <div class="tracker-body">
+                        <div class="current-task text-muted">오류 발생: 이미지 생성 실패 (DALL-E API 한도 초과)</div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 45%; background: var(--danger);"></div></div>
+                        <div class="task-title">"미국 배당주 투자 전 고려할 3가지?"</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px; color: var(--danger);">조치가 필요합니다. (10:15 AM 중단)</div>
+                    </div>
+                    <div class="tracker-footer">
+                        <!-- 이슈 해결 화면(Content 편집)으로 즉시 이동 -->
+                        <button class="btn btn-danger" style="flex:1" onclick="openImageEditor()"><i data-lucide="wrench" size="14"></i> 문제 해결하기 (이미지 편집)</button>
+                    </div>
+                </div>
+
+                <!-- Blog 3: Idle / Waiting -->
+                <div class="card blog-tracker" style="border-color: var(--border-soft)">
+                    <div class="tracker-header">
+                        <div>
+                            <div class="blog-name"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=wp" width="20" style="border-radius:4px"> 연예 팩트체크</div>
+                            <span class="blog-niche">연예/가십 전문</span>
+                        </div>
+                        <span class="badge wait"><i data-lucide="clock" size="12"></i> 수집 대기중</span>
+                    </div>
+                    <div class="tracker-body">
+                        <div class="current-task text-muted">다음 발행 예정: 14:00 (현재 대기)</div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: var(--warning);"></div></div>
+                        <div class="task-title text-muted">수집된 뉴스 URL 없음</div>
+                        <div style="font-size: 0.8rem; margin-top: 8px; color: var(--text-secondary);">설정된 타겟 URL 탐색 중...</div>
+                    </div>
+                    <div class="tracker-footer">
+                        <button class="btn btn-outline" style="flex:1" onclick="nav('settings', document.querySelectorAll('.nav-item')[1])"><i data-lucide="settings" size="14"></i> 설정 변경</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. BLOG SETTINGS (개별 특성 및 프롬프트 설정) -->
+        <section id="settings" class="page">
+            <div class="header-section">
+                <div>
+                    <h1 class="page-title">개별 블로그 설정</h1>
+                    <p class="page-desc">각 블로그의 전문 분야, 수집 소스, 맞춤형 프롬프트를 세팅합니다.</p>
+                </div>
+                <button class="btn btn-primary"><i data-lucide="save" size="16"></i> 전체 저장</button>
+            </div>
+
+            <div class="settings-grid">
+                <!-- Blog List Panel -->
+                <div class="card" style="padding: 16px;">
+                    <div style="font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-soft);">운영 중인 블로그 (3)</div>
+                    <div class="blog-list">
+                        <div class="blog-list-item active">
+                            <div style="font-weight: 700;">라이프 해커스</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Naver • 건강/리빙</div>
+                        </div>
+                        <div class="blog-list-item">
+                            <div style="font-weight: 700;">머니 트렌드</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Tistory • 경제/금융</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 16px;"><i data-lucide="plus" size="14"></i> 새 블로그 추가</button>
+                </div>
+
+                <!-- Settings Detail Panel -->
+                <div class="card">
+                    <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 24px; display:flex; align-items:center; gap:8px;">
+                        <img src="https://api.dicebear.com/7.x/identicon/svg?seed=naver" width="24" style="border-radius:4px">
+                        라이프 해커스 세부 설정
+                    </h2>
+
+                    <div class="form-group">
+                        <label class="form-label">기본 정보 및 전문 분야</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="form-control" value="라이프 해커스" style="flex:1">
+                            <select class="form-control" style="flex:1">
+                                <option>건강/리빙</option>
+                                <option>IT/테크</option>
+                                <option>경제/금융</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">뉴스 수집 타겟 URL (n개 지원)</label>
+                        <textarea class="form-control" rows="3">https://news.naver.com/section/103&#10;https://health.chosun.com/news/</textarea>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;">엔터(줄바꿈)로 여러 URL을 입력하세요.</div>
+                    </div>
+
+                    <div style="margin: 32px 0; border-top: 1px solid var(--border-soft);"></div>
+
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>제목 & 본문 프롬프트 설정</span>
+                            <!-- 지능형 프롬프트 빌더로 바로 이동하는 연결점 -->
+                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="nav('builder', document.querySelectorAll('.nav-item')[3])">
+                                <i data-lucide="sparkles" size="12" style="color:var(--purple)"></i> 지능형 빌더로 최신화
+                            </button>
+                        </div>
+                        
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); display:block; margin-bottom:4px;">제목 생성 프롬프트</label>
+                        <input type="text" class="form-control" value="검색 수요는 있지만 경쟁이 적은 롱테일 키워드를 발굴하여 38자를 넘기지 않고 의문문으로 끝나는 후킹 제목 작성" style="margin-bottom: 16px;">
+                        
+                        <label style="font-size: 0.85rem; color: var(--text-secondary); display:block; margin-bottom:4px;">본문 생성 프롬프트 (페르소나)</label>
+                        <textarea class="form-control" rows="6">네이버 홈판 노출을 목표로 차별화된 시각으로 작성.
+1. 오리지널 스타일 (정보 60 : 감성 40 비율) 유지.
+2. 메인 키워드(롱테일)를 본문에 5-7회 자연스럽게 반복.
+3. 구체적인 경험담을 녹여 AI 냄새 제거. 친구에게 말하듯 편안한 말투 사용.</textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CONTENT HUB (전체 콘텐츠 리스트) -->
+        <section id="contents" class="page">
+            <div class="header-section">
+                <div>
+                    <h1 class="page-title">전체 콘텐츠 리스트</h1>
+                    <p class="page-desc">발행 완료, 대기 중이거나 오류가 발생한 모든 포스트를 파악합니다.</p>
+                </div>
+                <div class="flex gap-2">
+                    <select class="form-control" style="width: 150px; padding: 8px;"><option>전체 블로그</option><option>라이프 해커스</option></select>
+                    <select class="form-control" style="width: 150px; padding: 8px;"><option>상태 전체</option><option>에러 발생</option></select>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>상태</th>
+                            <th>포스트 제목</th>
+                            <th>대상 블로그</th>
+                            <th>키워드</th>
+                            <th>날짜</th>
+                            <th>액션</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge error">오류: 이미지</span></td>
+                            <td style="font-weight: 700;">미국 배당주 투자 전 고려할 3가지?</td>
+                            <td>머니 트렌드</td>
+                            <td><span class="text-muted">#미국배당주 #투자고려사항</span></td>
+                            <td class="text-muted">오늘 10:15</td>
+                            <td>
+                                <!-- 컨텍스트에 맞는 이미지 에디터 호출 -->
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openImageEditor()"><i data-lucide="image" size="12"></i> 이미지 수정</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge info">발행 대기</span></td>
+                            <td style="font-weight: 700;">수면 장애 극복하는 롱테일 루틴, 진짜 효과 있을까?</td>
+                            <td>라이프 해커스</td>
+                            <td><span class="text-muted">#수면루틴 #불면증극복</span></td>
+                            <td class="text-muted">오늘 14:00 (예정)</td>
+                            <td><button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;"><i data-lucide="edit" size="12"></i> 본문 검수</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge run">발행 완료</span></td>
+                            <td style="font-weight: 700;">혈당 낮추는 식후 10분 걷기 진짜일까?</td>
+                            <td>라이프 해커스</td>
+                            <td><span class="text-muted">#혈당관리 #식후걷기</span></td>
+                            <td class="text-muted">어제 18:30</td>
+                            <td><button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;"><i data-lucide="external-link" size="12"></i> 블로그 보기</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. PROMPT BUILDER (지능형 프롬프트 빌더) -->
+        <section id="builder" class="page">
+            <div class="header-section">
+                <div>
+                    <h1 class="page-title">지능형 프롬프트 빌더</h1>
+                    <p class="page-desc">성공적인 롤모델 블로그의 콘텐츠를 추출하여 최적의 프롬프트를 자동 생성합니다.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="form-label">롤모델 블로그 URL 또는 포스트 주소 입력</div>
+                <div class="flex gap-2">
+                    <input type="text" class="form-control" placeholder="https://blog.naver.com/rolemodel_id" value="https://blog.naver.com/top_health_influencer">
+                    <button class="btn btn-primary" style="width: 140px;"><i data-lucide="search" size="16"></i> 전략 추출</button>
+                </div>
+            </div>
+
+            <div class="builder-layout">
+                <!-- Analysis Result -->
+                <div class="analysis-box">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; color: var(--purple); display:flex; align-items:center; gap:8px;">
+                        <i data-lucide="brain-circuit"></i> 추출된 성공 전략
+                    </h3>
+                    <ul style="color: var(--text-secondary); margin-left: 20px; line-height: 1.8;">
+                        <li><strong>키워드 전략:</strong> 경쟁이 적은 소형(롱테일) 키워드 적극 활용</li>
+                        <li><strong>비율:</strong> 정보성 60% : 감성/경험담 40%</li>
+                        <li><strong>문체:</strong> 친구에게 이야기하듯 편안하고 친근함. (AI 냄새 제거)</li>
+                        <li><strong>제목 패턴:</strong> 독자 궁금증 유발, 38자 이내, 의문형 종료.</li>
+                        <li><strong>본문 구성:</strong> 메인 키워드 자연스럽게 5~7회 분산 배치.</li>
+                    </ul>
+                </div>
+
+                <!-- Generated Prompt -->
+                <div class="card">
+                    <div class="flex justify-between items-center" style="margin-bottom: 16px;">
+                        <h3 style="font-size: 1.1rem; font-weight: 800;">생성된 시스템 프롬프트</h3>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="nav('settings', document.querySelectorAll('.nav-item')[1])"><i data-lucide="check" size="14"></i> 블로그에 바로 적용</button>
+                    </div>
+                    <textarea class="form-control" rows="8" style="font-family: monospace; font-size: 0.85rem; color: #10b981; background: #050505;">System: 당신은 네이버 홈판 노출을 목표로 하는 전문 블로거입니다. 
+Target Keyword: {long_tail_keyword}
+
+[제목 작성 지침]
+- 38자를 넘기지 마세요.
+- 클릭을 유도하는 후킹한 문장으로 작성하되 반드시 의문문(?)으로 끝내세요.
+
+[본문 작성 지침]
+- 정보 전달(60%)과 개인적 경험/감성(40%)의 비율을 맞춰주세요.
+- 친구에게 이야기하듯 친근하고 편안한 말투를 사용하세요. (해요체)
+- 본문 내에 {long_tail_keyword}를 5~7회 억지스럽지 않게 자연스럽게 녹여내세요.
+- AI가 쓴 것 같은 기계적인 표현을 배제하고 인간적인 진정성을 담아주세요.</textarea>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Image Studio (Contextual Overlay) -->
+    <!-- 고민하신 바와 같이 별도 메뉴가 아닌 필요할 때 호출되는 모달로 구현 -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-weight: 800; font-size: 1.2rem; display:flex; align-items:center; gap:8px;">
+                    <i data-lucide="image" class="text-accent"></i> 인스타그램 이미지 간편 편집
+                </div>
+                <button class="btn btn-outline" style="border:none; padding:4px;" onclick="closeImageEditor()"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Toolbar -->
+                <div class="editor-toolbar">
+                    <button class="tool-btn active" title="크롭"><i data-lucide="crop"></i></button>
+                    <button class="tool-btn" title="브러쉬"><i data-lucide="paintbrush"></i></button>
+                    <button class="tool-btn" title="지우개"><i data-lucide="eraser"></i></button>
+                    <button class="tool-btn" title="텍스트"><i data-lucide="type"></i></button>
+                    <div style="flex:1"></div>
+                    <button class="tool-btn" title="실행취소"><i data-lucide="undo-2"></i></button>
+                </div>
+                
+                <!-- Workspace -->
+                <div class="editor-workspace">
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop" alt="편집중인 이미지" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <!-- 시각적 크롭 영역 가이드 시뮬레이션 -->
+                    <div style="position:absolute; top:10%; left:20%; width:60%; height:80%; border:2px dashed #fff; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
+                </div>
+            </div>
+            <div class="modal-header" style="border-top: 1px solid var(--border-soft); border-bottom: none; justify-content: flex-end; padding: 16px 24px;">
+                <button class="btn btn-outline" style="margin-right: 8px;" onclick="closeImageEditor()">취소</button>
+                <button class="btn btn-primary" onclick="closeImageEditor()"><i data-lucide="save" size="16"></i> 편집 완료 및 본문 적용</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 네비게이션 처리 (메뉴 이동)
+        function nav(pageId, element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // 컨텍스트 모달 제어 (이미지 에디터)
+        // 별도 메뉴가 아닌, 수정이 필요한 순간(에러해결, 초안검수 등)에 호출됩니다.
+        function openImageEditor() {
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function closeImageEditor() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+        
+        // 툴바 액티브 토글 시뮬레이션
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.title === '실행취소') return; // 실행취소는 액티브 상태 생략
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
